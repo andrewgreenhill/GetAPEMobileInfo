@@ -63,6 +63,11 @@ var my_GAMI_NameSpace = function() {
     if (site1.name === site1.name.split('.')[0]) {
       site1.name = site1.name + '.apemobile.com';
     }
+    if (!isApeMobileSite(site1.name)) {
+      document.getElementById('giErrorText').innerHTML = 'That is not a valid APE Mobile Site Name!';
+      document.getElementById('giErrorText').style.display = 'block';
+      return;
+    }
 
     site1.apiKey = document.getElementById('siteKey').value.trim();
     if (!site1.apiKey) {
@@ -103,6 +108,14 @@ var my_GAMI_NameSpace = function() {
     document.getElementById('fileName').value = defaultFilename(site1.name, infoType);
     document.getElementById('fileName').style.display = 'initial';
     document.getElementById('butn_DF').style.display = 'initial';
+  }
+
+  function isApeMobileSite(siteDomain) {
+    const pattern1 = new RegExp('^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9].apemobile.com$');
+    const pattern2 = new RegExp(
+      '^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9].apemobile-[a-zA-Z0-9-]{0,176}[a-zA-Z0-9].com$'
+    );
+    return pattern1.test(siteDomain) || pattern2.test(siteDomain);
   }
 
   function removeStartOfString(str, marker) {
