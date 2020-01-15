@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Get APE Mobile Info</title>
+    <!-- By Andrew Greenhill -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" type="text/css" href="src/OpenSans.css">
+    <script src="src/GetAPEMobileInfo.js" type="module" async></script>
+</head>
+<body>
+    <header">
+        <div id="header" style="width: 66%; display: inline-block;">
+            <h2 style="margin-left: 3%;">Get APE Mobile Info</h2>
+        </div>
+        <div style="width: 31%; display: inline-block; text-align: right;">
+            By Andrew Greenhill
+        </div>
+    </header>
+    <main style="margin-left: 2%;">
+        <p style="display: none;"><em>Placeholder</em> for explanation and instructions...</p style="display: none;">
+        <form action="" method="post">
+            <label for="siteName" style="margin-right: 9px;">Site Name</label>
+            <input id="siteName" name="siteName" type="text" style="width: 250px;" required/>
+            <!-- <p>
+            <label for="emailAddress">Email address</label>
+            <input id="emailAddress" name="emailAddress" type="text" required/> -->
+            <p>
+            <label for="siteKey" style="margin-right: 27px;">Site Key</label>
+            <input id="siteKey" name="siteKey" type="text" style="width: 250px;" required/>
+            <p>
+            <label for="infoType" style="margin-right: 20px;">Info type</label>
+            <select name="infoType" id="infoType" style="width: 254px;" required>
+                <option value="">Select</option>
+                <option value="User">Users</option>
+                <option value="Project">Projects</option>
+                <option value="Template">Templates</option>
+                <option value="OrgList">Org Lists</option>
+                <option value="ProjectListType">Proj List Types</option>
+            </select>
+            <!-- <input type="submit" value="Submit"> -->
+        </form>
+        <button id='butn_GI' style="display: block;">Get info</button>
+        <p id='giErrorText' style="display: none; color: rgb(200, 19, 19)"></p>
+        <p id='resultSummaryText' style="display: none;"></p>
+        <button id='butn_DF' style="display: none;">Download</button>
+        <!-- <label id="fileNameLabel"  for="fileName" style="display: none; margin-right: 9px;">File Name</label> -->
+        <input id="fileName" name="fileName" type="text" style="display: none; width: 258px;" required/>
+    </main>
+</body>
+</html>
