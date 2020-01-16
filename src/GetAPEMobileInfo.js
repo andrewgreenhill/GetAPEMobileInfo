@@ -19,7 +19,7 @@ var my_GAMI_NameSpace = function() {
     document.getElementById('siteName').placeholder = '';
     // document.getElementById('emailAddress').placeholder = '';
     document.getElementById('butn_GI').onclick = getInfo;
-    document.getElementById('butn_DF').onclick = downloadCSV;
+    document.getElementById('butn_DF').onclick = downloadAction;
   }
 
   var site1 = {
@@ -31,11 +31,14 @@ var my_GAMI_NameSpace = function() {
     defaultTimeout: 3000,
   };
 
+  var jsonResult = '';
   var csv = '';
-  var infoType = '';
 
-  function downloadCSV() {
-    let outputFilename = document.getElementById('fileName').value || defaultFilename(site1.name, infoType);
+  function downloadAction() {
+    let outputFilename = document.getElementById('fileName').value || document.getElementById('fileName').placeholder;
+    // ...
+    // If extension ends with .json then: downloadFile(JSON.stringify(jsonResult), 'jsonResult.json', 'text/plain');
+    // else:
     downloadFile(csv, outputFilename, 'text/plain');
   }
 
@@ -76,7 +79,7 @@ var my_GAMI_NameSpace = function() {
       return;
     }
 
-    infoType = document.getElementById('infoType').value;
+    let infoType = document.getElementById('infoType').value;
     let entityType = map2APEMobileEntityType(infoType);
     if (!infoType || !entityType) {
       document.getElementById('giErrorText').innerHTML = 'Please select an Info Type';
@@ -84,7 +87,7 @@ var my_GAMI_NameSpace = function() {
       return;
     }
 
-    let jsonResult = '';
+    jsonResult = '';
     try {
       jsonResult = await aGet(site1, entityType, '', {}, { dontRLUserCheck: true });
     } catch (error) {
@@ -93,9 +96,7 @@ var my_GAMI_NameSpace = function() {
       // console.error(error);
       return;
     }
-
     // console.log(jsonResult);
-    // download(JSON.stringify(jsonResult), 'jsonResult.json', 'text/plain');
 
     document.getElementById('resultSummaryText').innerHTML = `Got ${jsonResult.length} ${map2APEMobileEName(
       infoType
@@ -106,6 +107,7 @@ var my_GAMI_NameSpace = function() {
     csv = json2csv(jsonResult, keysOf1stRecord(jsonResult));
 
     document.getElementById('fileName').value = defaultFilename(site1.name, infoType);
+    document.getElementById('fileName').placeholder = defaultFilename(site1.name, infoType);
     document.getElementById('fileName').style.display = 'initial';
     document.getElementById('butn_DF').style.display = 'initial';
   }
