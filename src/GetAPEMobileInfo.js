@@ -36,10 +36,17 @@ var my_GAMI_NameSpace = function() {
 
   function downloadAction() {
     let outputFilename = document.getElementById('fileName').value || document.getElementById('fileName').placeholder;
-    // ...
-    // If extension ends with .json then: downloadFile(JSON.stringify(jsonResult), 'jsonResult.json', 'text/plain');
-    // else:
-    downloadFile(csv, outputFilename, 'text/plain');
+    let ofs = outputFilename.split('.');
+    if (ofs[ofs.length - 1].toLowerCase() === 'json') {
+      // If extension ends with .json then:
+      downloadFile(JSON.stringify(jsonResult), outputFilename, 'text/plain');
+    } else {
+      if (ofs.length === 1) {
+        //If there is no extension then add .csv
+        outputFilename = outputFilename + '.csv';
+      }
+      downloadFile(csv, outputFilename, 'text/plain');
+    }
   }
 
   function defaultFilename(siteName, infoType) {
