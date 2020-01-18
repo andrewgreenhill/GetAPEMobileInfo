@@ -14,6 +14,22 @@ import { aGet, apeEntityType } from './APE_API_Helper.js';
 var my_GAMI_NameSpace = function() {
   //A function wrapper simply to create my own name space
 
+  var jsonResult = '';
+  var csv = '';
+
+  var site1 = {
+    type: 'ape mobile',
+    name: '',
+    apiKey: '',
+    userID: 1,
+    proxy: '',
+    defaultTimeout: 10000,
+  };
+
+  if (!isApeMobileSite(window.location.hostname)) {
+    site1.proxy = 'https://cors-anywhere-ag.herokuapp.com/';
+  }
+
   initialise_web_page(); //Set things up in the web page HTML:
   function initialise_web_page() {
     document.getElementById('siteName').placeholder = '';
@@ -21,18 +37,6 @@ var my_GAMI_NameSpace = function() {
     document.getElementById('butn_GI').onclick = getInfo;
     document.getElementById('butn_DF').onclick = downloadAction;
   }
-
-  var site1 = {
-    type: 'ape mobile',
-    name: '',
-    apiKey: '',
-    userID: 1,
-    proxy: 'https://cors-anywhere-ag.herokuapp.com/',
-    defaultTimeout: 3000,
-  };
-
-  var jsonResult = '';
-  var csv = '';
 
   function downloadAction() {
     let outputFilename = document.getElementById('fileName').value || document.getElementById('fileName').placeholder;
@@ -42,8 +46,7 @@ var my_GAMI_NameSpace = function() {
       downloadFile(JSON.stringify(jsonResult), outputFilename, 'text/plain');
     } else {
       if (ofs.length === 1) {
-        //If there is no extension then add .csv
-        outputFilename = outputFilename + '.csv';
+        outputFilename = outputFilename + '.csv'; //If there is no extension then add .csv
       }
       downloadFile(csv, outputFilename, 'text/plain');
     }
