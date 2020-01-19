@@ -7,16 +7,15 @@ An assistant for getting lists of data from APE Mobile sites, including:
 * Project List Types
 
 By Andrew Greenhill.
-Version ~~~0.5...
 -----------------------------------------------------------------------------*/
 import { aGet, apeEntityType } from './APE_API_Helper.js';
+const gami_version = '0.5, beta';
 
 var my_GAMI_NameSpace = function() {
-  //A function wrapper simply to create my own name space
+  //A function wrapper simply to create my own 'Get APE Mobile Info' name space
 
   var jsonResult = '';
   var csv = '';
-
   var site1 = {
     type: 'ape mobile',
     name: '',
@@ -32,10 +31,61 @@ var my_GAMI_NameSpace = function() {
 
   initialise_web_page(); //Set things up in the web page HTML:
   function initialise_web_page() {
-    document.getElementById('siteName').placeholder = '';
-    // document.getElementById('emailAddress').placeholder = '';
+    setElementTextDisplay('versionDisplay', 'Version ' + String(gami_version), 'block');
     document.getElementById('butn_GI').onclick = getInfo;
     document.getElementById('butn_DF').onclick = downloadAction;
+  }
+
+  async function getInfo() {
+    clearPageBelowGetInfo();
+
+    // Get the site name, and 'standardise' it (so that a variety of user input 'styles' can be accepted)
+    site1.name = document.getElementById('siteName').value.trim() || document.getElementById('siteName').placeholder;
+    site1.name = removeStartOfString(site1.name, '//');
+    site1.name = removeEndOfString(site1.name, '/');
+    if (!site1.name) {
+      setElementTextDisplay('giErrorText', 'Please enter a Site Name', 'block');
+      return;
+    }
+    if (site1.name === site1.name.split('.')[0]) {
+      site1.name = site1.name + '.apemobile.com';
+    }
+    if (!isApeMobileSite(site1.name)) {
+      setElementTextDisplay('giErrorText', 'Invalid APE Mobile Site Name!', 'block');
+      return;
+    }
+
+    site1.apiKey = document.getElementById('siteKey').value.trim();
+    if (!site1.apiKey) {
+      setElementTextDisplay('giErrorText', 'Please enter a Site Key', 'block');
+      return;
+    }
+
+    let infoType = document.getElementById('infoType').value;
+    let entityType = map2APEMobileEntityType(infoType);
+    if (!infoType || !entityType) {
+      setElementTextDisplay('giErrorText', 'Please select an Info Type', 'block');
+      return;
+    }
+
+    jsonResult = '';
+    try {
+      jsonResult = await aGet(site1, entityType, '', {}, { dontRLUserCheck: true });
+    } catch (error) {
+      setElementTextDisplay('giErrorText', error, 'block');
+      return;
+    }
+    // console.log(jsonResult);
+
+    setElementTextDisplay('resultSummaryText', `Got ${jsonResult.length} ${map2APEMobileEName(infoType)}s`, 'block');
+
+    // Convert jsonResult to CSV, using the 1st record to determine the column headings
+    csv = json2csv(jsonResult, keysOf1stRecord(jsonResult));
+
+    document.getElementById('fileName').value = defaultFilename(site1.name, infoType);
+    document.getElementById('fileName').placeholder = defaultFilename(site1.name, infoType);
+    document.getElementById('fileName').style.display = 'initial';
+    document.getElementById('butn_DF').style.display = 'initial';
   }
 
   function downloadAction() {
@@ -52,74 +102,20 @@ var my_GAMI_NameSpace = function() {
     }
   }
 
-  function defaultFilename(siteName, infoType) {
-    return removeEndOfString(siteName, '.') + '_' + infoType + 's_' + currentYYMMDD() + '.csv';
+  function setElementTextDisplay(elementID, text2Display, displayStyle) {
+    document.getElementById(elementID).innerHTML = text2Display;
+    document.getElementById(elementID).style.display = displayStyle;
   }
 
-  async function getInfo() {
-    document.getElementById('giErrorText').innerHTML = '';
-    document.getElementById('giErrorText').style.display = 'none';
-    document.getElementById('resultSummaryText').innerHTML = '';
-    document.getElementById('resultSummaryText').style.display = 'none';
+  function clearPageBelowGetInfo() {
+    setElementTextDisplay('giErrorText', '', 'none');
+    setElementTextDisplay('resultSummaryText', '', 'none');
     document.getElementById('fileName').style.display = 'none';
     document.getElementById('butn_DF').style.display = 'none';
+  }
 
-    // Get the site name, and then 'standardise' it (so that a variety of user input 'styles' can be accepted)
-    site1.name = document.getElementById('siteName').value.trim() || document.getElementById('siteName').placeholder;
-    site1.name = removeStartOfString(site1.name, '//');
-    site1.name = removeEndOfString(site1.name, '/');
-    if (!site1.name) {
-      document.getElementById('giErrorText').innerHTML = 'Please enter a Site Name';
-      document.getElementById('giErrorText').style.display = 'block';
-      return;
-    }
-    if (site1.name === site1.name.split('.')[0]) {
-      site1.name = site1.name + '.apemobile.com';
-    }
-    if (!isApeMobileSite(site1.name)) {
-      document.getElementById('giErrorText').innerHTML = 'That is not a valid APE Mobile Site Name!';
-      document.getElementById('giErrorText').style.display = 'block';
-      return;
-    }
-
-    site1.apiKey = document.getElementById('siteKey').value.trim();
-    if (!site1.apiKey) {
-      document.getElementById('giErrorText').innerHTML = 'Please enter a Site Key';
-      document.getElementById('giErrorText').style.display = 'block';
-      return;
-    }
-
-    let infoType = document.getElementById('infoType').value;
-    let entityType = map2APEMobileEntityType(infoType);
-    if (!infoType || !entityType) {
-      document.getElementById('giErrorText').innerHTML = 'Please select an Info Type';
-      document.getElementById('giErrorText').style.display = 'block';
-      return;
-    }
-
-    jsonResult = '';
-    try {
-      jsonResult = await aGet(site1, entityType, '', {}, { dontRLUserCheck: true });
-    } catch (error) {
-      document.getElementById('giErrorText').innerHTML = 'An error occurred.';
-      document.getElementById('giErrorText').style.display = 'block';
-      // console.error(error);
-      return;
-    }
-    // console.log(jsonResult);
-
-    document.getElementById('resultSummaryText').innerHTML = `Got ${jsonResult.length} ${map2APEMobileEName(
-      infoType
-    )}s`;
-    document.getElementById('resultSummaryText').style.display = 'block';
-
-    // Convert jsonResult to CSV, using the 1st record to determine the column headings
-    csv = json2csv(jsonResult, keysOf1stRecord(jsonResult));
-
-    document.getElementById('fileName').value = defaultFilename(site1.name, infoType);
-    document.getElementById('fileName').placeholder = defaultFilename(site1.name, infoType);
-    document.getElementById('fileName').style.display = 'initial';
-    document.getElementById('butn_DF').style.display = 'initial';
+  function defaultFilename(siteName, infoType) {
+    return removeEndOfString(siteName, '.') + '_' + infoType + 's_' + currentYYMMDD() + '.csv';
   }
 
   function isApeMobileSite(siteDomain) {
@@ -133,9 +129,11 @@ var my_GAMI_NameSpace = function() {
   function removeStartOfString(str, marker) {
     return str.split(marker).pop();
   }
+
   function removeEndOfString(str, marker) {
     return str.split(marker)[0];
   }
+
   function currentYYMMDD() {
     var today = new Date();
     var dd = String(today.getDate()).padStart(2, '0');
@@ -181,6 +179,7 @@ var my_GAMI_NameSpace = function() {
         break;
     }
   }
+
   function map2APEMobileEName(infoType) {
     switch (infoType) {
       case 'User':
@@ -198,4 +197,4 @@ var my_GAMI_NameSpace = function() {
     }
   }
 };
-my_GAMI_NameSpace(); //End of my_TMA_NameSpace function, and then run it.
+my_GAMI_NameSpace(); //End of my_GAMI_NameSpace function; now run that.
