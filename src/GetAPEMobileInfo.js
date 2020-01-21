@@ -9,13 +9,14 @@ An assistant for getting lists of data from APE Mobile sites, including:
 By Andrew Greenhill.
 -----------------------------------------------------------------------------*/
 import { aGet, apeEntityType } from './APE_API_Helper.js';
-const gami_version = '0.5, beta';
+const gami_version = '0.5.1, beta';
 
 var my_GAMI_NameSpace = function() {
   //A function wrapper simply to create my own 'Get APE Mobile Info' name space
 
   var jsonResult = '';
   var csv = '';
+
   var site1 = {
     type: 'ape mobile',
     name: '',
@@ -25,15 +26,41 @@ var my_GAMI_NameSpace = function() {
     defaultTimeout: 10000,
   };
 
+  //'infoTypes' offered to the user, plus names for reporting & filenaming, and EntityType for using it with the helper
+  const infoTypeOptions = [
+    { text: 'Users', name: 'user', filename: 'Users', et: apeEntityType.User },
+    { text: 'Projects', name: 'project', filename: 'Projects', et: apeEntityType.Project },
+    { text: 'Templates', name: 'template', filename: 'Templates', et: apeEntityType.Template },
+    { text: 'Org Lists', name: 'Org List', filename: 'OrgLists', et: apeEntityType.OrgList },
+    {
+      text: 'Proj List Types',
+      name: 'Project List Type',
+      filename: 'ProjectListTypes',
+      et: apeEntityType.ProjectListType,
+    },
+    // { text: 'Proj Members', name: 'Project Member', filename: 'ProjectMembers', et: apeEntityType.ProjMember },
+    // { text: 'Proj WBS items', name: 'WBS item', filename: 'ProjectWBSItems', et: apeEntityType.ProjWBSItem },
+    { text: 'Drawings & Docs', name: 'D&D', filename: 'DrawingsDocs', et: apeEntityType.Drawing },
+  ];
+
   if (!isApeMobileSite(window.location.hostname)) {
-    site1.proxy = 'https://cors-anywhere-ag.herokuapp.com/';
+    site1.proxy = 'https://cors-anywhere-ag.herokuapp.com/'; //This proxy prevents blocking by browser SOP
   }
 
   initialise_web_page(); //Set things up in the web page HTML:
   function initialise_web_page() {
     setElementTextDisplay('versionDisplay', 'Version ' + String(gami_version), 'block');
+    infoTypeOptions.forEach(optn => addOptionToSelectList('infoType', optn.text, optn.et));
     document.getElementById('butn_GI').onclick = getInfo;
     document.getElementById('butn_DF').onclick = downloadAction;
+  }
+
+  function addOptionToSelectList(listID, text, value) {
+    let sel = document.getElementById(listID); // get reference to select element
+    let opt = document.createElement('option'); // create new option element
+    opt.appendChild(document.createTextNode(text)); // create text node to add to option element (opt)
+    opt.value = value; // set value property of opt
+    sel.appendChild(opt); // add opt to end of select box (sel)
   }
 
   async function getInfo() {
@@ -61,9 +88,8 @@ var my_GAMI_NameSpace = function() {
       return;
     }
 
-    let infoType = document.getElementById('infoType').value;
-    let entityType = map2APEMobileEntityType(infoType);
-    if (!infoType || !entityType) {
+    let entityType = document.getElementById('infoType').value;
+    if (!entityType) {
       setElementTextDisplay('giErrorText', 'Please select an Info Type', 'block');
       return;
     }
@@ -77,13 +103,18 @@ var my_GAMI_NameSpace = function() {
     }
     // console.log(jsonResult);
 
-    setElementTextDisplay('resultSummaryText', `Got ${jsonResult.length} ${map2APEMobileEName(infoType)}s`, 'block');
+    let infoTypeName = infoTypeOptions.find(x => x.et === entityType).name;
+    if (jsonResult.length > 1) {
+      infoTypeName = infoTypeName + 's';
+    }
+    setElementTextDisplay('resultSummaryText', `Got ${jsonResult.length} ${infoTypeName}`, 'block');
 
     // Convert jsonResult to CSV, using the 1st record to determine the column headings
     csv = json2csv(jsonResult, keysOf1stRecord(jsonResult));
 
-    document.getElementById('fileName').value = defaultFilename(site1.name, infoType);
-    document.getElementById('fileName').placeholder = defaultFilename(site1.name, infoType);
+    let defltFilename = defaultFilename(site1.name, entityType);
+    document.getElementById('fileName').value = defltFilename;
+    document.getElementById('fileName').placeholder = defltFilename;
     document.getElementById('fileName').style.display = 'initial';
     document.getElementById('butn_DF').style.display = 'initial';
   }
@@ -114,8 +145,15 @@ var my_GAMI_NameSpace = function() {
     document.getElementById('butn_DF').style.display = 'none';
   }
 
-  function defaultFilename(siteName, infoType) {
-    return removeEndOfString(siteName, '.') + '_' + infoType + 's_' + currentYYMMDD() + '.csv';
+  function defaultFilename(siteName, entityType) {
+    return (
+      removeEndOfString(siteName, '.') +
+      '_' +
+      infoTypeOptions.find(x => x.et === entityType).filename +
+      '_' +
+      currentYYMMDD() +
+      '.csv'
+    );
   }
 
   function isApeMobileSite(siteDomain) {
@@ -161,40 +199,6 @@ var my_GAMI_NameSpace = function() {
     // document.body.appendChild(downloadLink);
     downloadLink.click();
     // document.body.removeChild(downloadLink);
-  }
-
-  function map2APEMobileEntityType(infoType) {
-    switch (infoType) {
-      case 'User':
-        return apeEntityType.User;
-      case 'Project':
-        return apeEntityType.Project;
-      case 'Template':
-        return apeEntityType.Template;
-      case 'OrgList':
-        return apeEntityType.OrgList;
-      case 'ProjectListType':
-        return apeEntityType.ProjectListType;
-      default:
-        break;
-    }
-  }
-
-  function map2APEMobileEName(infoType) {
-    switch (infoType) {
-      case 'User':
-        return 'user';
-      case 'Project':
-        return 'project';
-      case 'Template':
-        return 'template';
-      case 'OrgList':
-        return 'Org List';
-      case 'ProjectListType':
-        return 'Project List Type';
-      default:
-        break;
-    }
   }
 };
 my_GAMI_NameSpace(); //End of my_GAMI_NameSpace function; now run that.
