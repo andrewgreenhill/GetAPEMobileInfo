@@ -13,14 +13,14 @@ class aResponseError extends Error {
   }
 }
 
-function fetchWithExtras(uri, options = {}, time = 3000) {
+function fetchWithExtras(uri, options = {}, time = 20000) {
   //Placeholder: Keep audit log of request.
   //Throttling. Placeholder: Check data request intensity[+volume] and if-need-be pause to slow it down, then:
   let returnVal = fetchWithTimeout(uri, options, time);
   return returnVal;
 }
 
-function fetchWithTimeout(uri, options = {}, time = 3000) {
+function fetchWithTimeout(uri, options = {}, time = 20000) {
   //Request Timeouts With the Fetch API (AG modified code from https://www.lowmess.com/blog/fetch-with-timeout)
   // Lets set up our `AbortController`, and create a request options object
   // that includes the controller's `signal` to pass to `fetch`.
@@ -297,7 +297,7 @@ var rlcheckApeUserPermissions = rateLimitFunctionCallsTo(checkApeUserPermissions
 async function checkApeUserPermissions(site) {
   //Check that the user is Active and a Super type user
   verboseConLog('* Checking Ape User Permissions *', 'apemobile');
-  let timeLimit = 5000;
+  let timeLimit = 20000;
   const apeBaseURL = '/public_api/v2/';
   let requestURL =
     (typeof site.proxy === 'string' ? site.proxy : '') + 'https://' + site.name + apeBaseURL + apeEntityType.User;
@@ -329,7 +329,7 @@ export async function aGet(site, entityType, entityId = '', entityParams = {}, s
     throw new Error(`Don't have permission for '${entityType}' '${entityId}' on ${site.name}`);
   }
   let siteType = checkSiteAndEntityType(site, entityType);
-  let timeLimit = 5000; //Default-default timeout
+  let timeLimit = 20000; //Default-default timeout
   if (specialParams.timeout) {
     //Timeout can be set via specialParams for an individual request
     timeLimit = specialParams.timeout;

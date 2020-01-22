@@ -9,7 +9,7 @@ An assistant for getting lists of data from APE Mobile sites, including:
 By Andrew Greenhill.
 -----------------------------------------------------------------------------*/
 import { aGet, apeEntityType } from './APE_API_Helper.js';
-const gami_version = '0.5.1, beta';
+const gami_version = '0.5.2, beta';
 
 var my_GAMI_NameSpace = function() {
   //A function wrapper simply to create my own 'Get APE Mobile Info' name space
@@ -23,7 +23,7 @@ var my_GAMI_NameSpace = function() {
     apiKey: '',
     userID: 1,
     proxy: '',
-    defaultTimeout: 10000,
+    defaultTimeout: 20000,
   };
 
   //'infoTypes' offered to the user, plus names for reporting & filenaming, and EntityType for using it with the helper
