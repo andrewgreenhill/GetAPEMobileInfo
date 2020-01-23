@@ -64,7 +64,7 @@ var my_GAMI_NameSpace = function() {
   }
 
   async function getInfo() {
-    clearPageBelowGetInfo();
+    clearPageBelowGetInfo(); //First, clear any display from previous time that GetInfo was used.
 
     // Get the site name, and 'standardise' it (so that a variety of user input 'styles' can be accepted)
     site1.name = document.getElementById('siteName').value.trim() || document.getElementById('siteName').placeholder;
@@ -82,18 +82,21 @@ var my_GAMI_NameSpace = function() {
       return;
     }
 
+    // Get the site key:
     site1.apiKey = document.getElementById('siteKey').value.trim();
     if (!site1.apiKey) {
       setElementTextDisplay('giErrorText', 'Please enter a Site Key', 'block');
       return;
     }
 
+    // Get the info type:
     let entityType = document.getElementById('infoType').value;
     if (!entityType) {
       setElementTextDisplay('giErrorText', 'Please select an Info Type', 'block');
       return;
     }
 
+    // Get the collection of data, in a JSON array:
     jsonResult = '';
     try {
       jsonResult = await aGet(site1, entityType, '', {}, { dontRLUserCheck: true });
@@ -101,8 +104,8 @@ var my_GAMI_NameSpace = function() {
       setElementTextDisplay('giErrorText', error, 'block');
       return;
     }
-    // console.log(jsonResult);
 
+    // Display summary info about what was obtained:
     let infoTypeName = infoTypeOptions.find(x => x.et === entityType).name;
     if (jsonResult.length > 1) {
       infoTypeName = infoTypeName + 's';
@@ -133,6 +136,7 @@ var my_GAMI_NameSpace = function() {
         break;
     }
 
+    // Create a default filename for the output file, and display it to the user:
     let defltFilename = defaultFilename(site1.name, entityType);
     document.getElementById('fileName').value = defltFilename;
     document.getElementById('fileName').placeholder = defltFilename;
