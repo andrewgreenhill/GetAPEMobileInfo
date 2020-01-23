@@ -9,7 +9,7 @@ An assistant for getting lists of data from APE Mobile sites, including:
 By Andrew Greenhill.
 -----------------------------------------------------------------------------*/
 import { aGet, apeEntityType } from './APE_API_Helper.js';
-const gami_version = '0.5.3, beta';
+const gami_version = '0.5.4, beta';
 
 var my_GAMI_NameSpace = function() {
   //A function wrapper simply to create my own 'Get APE Mobile Info' name space
@@ -109,9 +109,13 @@ var my_GAMI_NameSpace = function() {
     }
     setElementTextDisplay('resultSummaryText', `Got ${jsonResult.length} ${infoTypeName}`, 'block');
 
+    // Convert jsonResult to CSV
+    csv = '';
+    let keysToConvert = [];
     switch (entityType) {
       case apeEntityType.Template:
-        let keysToConvert = [
+        keysToConvert = [
+          // Use pre-set keys for the template output CSV headings
           'name',
           'type',
           'template_type',
@@ -124,8 +128,8 @@ var my_GAMI_NameSpace = function() {
         csv = json2csv(jsonResult, keysToConvert);
         break;
       default:
-        // Convert jsonResult to CSV using the 1st record to determine the column headings
-        csv = json2csv(jsonResult, keysOf1stRecord(jsonResult));
+        keysToConvert = keysOf1stRecord(jsonResult); // Use the 1st record to determine the column headings
+        csv = json2csv(jsonResult, keysToConvert);
         break;
     }
 
