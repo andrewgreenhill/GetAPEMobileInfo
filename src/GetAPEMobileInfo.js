@@ -64,7 +64,7 @@ var my_GAMI_NameSpace = function() {
   }
 
   async function getInfo() {
-    clearPageBelowGetInfo(); //First, clear any display from previous time that GetInfo was used.
+    clearPageBelowGetInfo(); //First, clear the display of any content from previous times that GetInfo was used.
 
     // Get the site name, and 'standardise' it (so that a variety of user input 'styles' can be accepted)
     site1.name = document.getElementById('siteName').value.trim() || document.getElementById('siteName').placeholder;
@@ -118,7 +118,7 @@ var my_GAMI_NameSpace = function() {
     switch (entityType) {
       case apeEntityType.Template:
         keysToConvert = [
-          // Use pre-set keys for the template output CSV headings
+          // For templates, use pre-set keys for the template output CSV headings
           'name',
           'type',
           'template_type',
