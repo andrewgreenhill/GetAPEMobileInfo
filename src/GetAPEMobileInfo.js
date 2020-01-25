@@ -9,7 +9,7 @@ An assistant for getting lists of data from APE Mobile sites, including:
 By Andrew Greenhill.
 -----------------------------------------------------------------------------*/
 import { aGet, apeEntityType } from './APE_API_Helper.js';
-const gami_version = '0.5.4, beta';
+const gami_version = '0.5.6, beta';
 
 var my_GAMI_NameSpace = function() {
   //A function wrapper simply to create my own 'Get APE Mobile Info' name space
@@ -42,6 +42,7 @@ var my_GAMI_NameSpace = function() {
     // { text: 'Proj WBS items', name: 'WBS item', filename: 'ProjectWBSItems', et: apeEntityType.ProjWBSItem },
     { text: 'Drawings & Docs', name: 'D&D', filename: 'DrawingsDocs', et: apeEntityType.Drawing },
   ];
+  const rateLimitOption = { dontRLUserCheck: true };
 
   if (!isApeMobileSite(window.location.hostname)) {
     site1.proxy = 'https://cors-anywhere-ag.herokuapp.com/'; //This proxy prevents blocking by browser SOP
@@ -53,6 +54,18 @@ var my_GAMI_NameSpace = function() {
     infoTypeOptions.forEach(optn => addOptionToSelectList('infoType', optn.text, optn.et));
     document.getElementById('butn_GI').onclick = getInfo;
     document.getElementById('butn_DF').onclick = downloadAction;
+    document.getElementById('infoType').addEventListener('change', displayTypeParams);
+    if (window.location.hostname === 'pegasus') {
+      document.getElementById('siteName').placeholder = 'apesandbox';
+    }
+  }
+
+  function displayTypeParams() {
+    if (document.getElementById('infoType').value === apeEntityType.Template) {
+      document.getElementById('templateOptions').style.display = 'block';
+    } else {
+      document.getElementById('templateOptions').style.display = 'none';
+    }
   }
 
   function addOptionToSelectList(listID, text, value) {
@@ -99,7 +112,22 @@ var my_GAMI_NameSpace = function() {
     // Get the collection of data, in a JSON array:
     jsonResult = '';
     try {
-      jsonResult = await aGet(site1, entityType, '', {}, { dontRLUserCheck: true });
+      let endpointParams = {};
+      switch (entityType) {
+        case apeEntityType.Template:
+          endpointParams = {
+            template_type: document.getElementById('templateType1').value,
+            type: document.getElementById('templateType2').value,
+            include_inactive: document.getElementById('include_inactive').checked,
+          };
+          if (endpointParams.template_type === 'All') {
+            delete endpointParams.template_type;
+          }
+          break;
+        default:
+          break;
+      }
+      jsonResult = await aGet(site1, entityType, '', endpointParams, rateLimitOption);
     } catch (error) {
       setElementTextDisplay('giErrorText', error, 'block');
       return;
@@ -119,6 +147,8 @@ var my_GAMI_NameSpace = function() {
       case apeEntityType.Template:
         keysToConvert = [
           // For templates, use pre-set keys for the template output CSV headings
+          'href',
+          'id',
           'name',
           'type',
           'template_type',
