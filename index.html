@@ -33,11 +33,37 @@
             <input id="siteKey" name="siteKey" type="text" style="width: 250px;" required/>
             <p>
             <label for="infoType" style="margin-right: 20px;">Info type</label>
-            <select name="infoType" id="infoType" style="width: 254px;" required>
+            <select name="infoType" id="infoType" style="width: 253px;" required>
                 <option value=""></option>
             </select>
             <!-- <input type="submit" value="Submit"> -->
         </form>
+        <div id='templateOptions'>
+            <strong>Template Options</strong>
+            <p></p>
+            <label for="templateType1" style="margin-right: 20px;">Template type</label>
+            <select name="templateType1" id="templateType1" style="width: 212px;" required>
+                <option value="All">All</option>
+                <option value="5">Form</option>
+                <option value="4">Action</option>
+                <option value="1">Memo: General</option>
+                <option value="2">Memo: Issue</option>
+                <option value="3">Memo: RFI</option>
+            </select>
+            <p></p>
+            <label for="templateType2" style="margin-right: 9px;">Draft/Published</label>
+            <select name="templateType2" id="templateType2" style="width: 212px;" required>
+                <option value="draft">Draft (recommended)</option>
+                <option value="published">Published</option>
+                <option value="archived">Archived</option>
+                <option value="draft|archived|published">All</option>
+            </select>
+            <p></p>  
+            <label for="include_inactive" style="margin-right: 7px;">Include inactive</label>          
+            <input type="checkbox" name="include_inactive" id="include_inactive" value=true>
+            <br>
+        </div>
+        <p></p>
         <button id='butn_GI' style="display: block;">Get info</button>
         <p id='giErrorText'></p>
         <p id='resultSummaryText' style="display: none;"></p>
