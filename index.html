@@ -38,8 +38,38 @@
             </select>
             <!-- <input type="submit" value="Submit"> -->
         </form>
-        <div id='templateOptions'>
-            <strong>Template Options</strong>
+
+        <div id='userOptions' class='optionsBox'>
+            <strong>Users</strong>
+            <p></p>
+            <label for="usersActive" style="margin-right: 15px;">Active setting</label>
+            <select name="usersActive" id="usersActive" style="width: 224px;" required>
+                <option value="true">Active</option>
+                <option value="false">Inactive</option>
+                <option value="all">Active or Inactive</option>
+            </select>
+        </div>
+
+        <div id='projectOptions' class='optionsBox'>
+            <strong>Projects</strong>
+            <p></p>
+            <label for="projectActive" style="margin-right: 15px;">Active setting</label>
+            <select name="projectActive" id="projectActive" style="width: 224px;" required>
+                <option value="true">Active</option>
+                <option value="false">Inactive</option>
+                <option value="all">Active or Inactive</option>
+            </select>
+        </div>
+
+        <div id='drawingOptions' class='optionsBox'>
+            <strong>Drawings & Docs</strong>
+            <p></p>
+            <label for="drawingProj" style="margin-right: 7px;">Project ID (optional)</label>
+            <input id="drawingProj" name="drawingProj" type="text" style="width: 180px;"/>
+        </div>
+
+        <div id='templateOptions' class='optionsBox'>
+            <strong>Templates</strong>
             <p></p>
             <label for="templateType1" style="margin-right: 20px;">Template type</label>
             <select name="templateType1" id="templateType1" style="width: 212px;" required>
@@ -63,13 +93,14 @@
             <input type="checkbox" name="include_inactive" id="include_inactive" value=true>
             <br>
         </div>
+
         <p></p>
         <button id='butn_GI' style="display: block;">Get info</button>
         <p id='giErrorText'></p>
         <p id='resultSummaryText' style="display: none;"></p>
         <button id='butn_DF' style="display: none;">Download</button>
         <!-- <label id="fileNameLabel"  for="fileName" style="display: none; margin-right: 9px;">File Name</label> -->
-        <input id="fileName" name="fileName" type="text" style="display: none; width: 258px;" required/>
+        <input id="fileName" name="fileName" type="text" style="display: none; width: 258px;"/>
     </main>
 </body>
 </html>

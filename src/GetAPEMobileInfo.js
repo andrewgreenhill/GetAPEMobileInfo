@@ -9,7 +9,7 @@ An assistant for getting lists of data from APE Mobile sites, including:
 By Andrew Greenhill.
 -----------------------------------------------------------------------------*/
 import { aGet, apeEntityType } from './APE_API_Helper.js';
-const gami_version = '0.5.6, beta';
+const gami_version = '0.5.7, beta';
 
 var my_GAMI_NameSpace = function() {
   //A function wrapper simply to create my own 'Get APE Mobile Info' name space
@@ -26,8 +26,8 @@ var my_GAMI_NameSpace = function() {
     defaultTimeout: 20000,
   };
 
-  //'infoTypes' offered to the user, plus names for reporting & filenaming, and EntityType for using it with the helper
-  const infoTypeOptions = [
+  //Info types offered to the user, plus names for reporting & filenaming, and EntityType for using it with API helper
+  const endpointOptions = [
     { text: 'Users', name: 'user', filename: 'Users', et: apeEntityType.User },
     { text: 'Projects', name: 'project', filename: 'Projects', et: apeEntityType.Project },
     { text: 'Templates', name: 'template', filename: 'Templates', et: apeEntityType.Template },
@@ -51,20 +51,38 @@ var my_GAMI_NameSpace = function() {
   initialise_web_page(); //Set things up in the web page HTML:
   function initialise_web_page() {
     setElementTextDisplay('versionDisplay', 'Version ' + String(gami_version), 'block');
-    infoTypeOptions.forEach(optn => addOptionToSelectList('infoType', optn.text, optn.et));
+    endpointOptions.forEach(optn => addOptionToSelectList('infoType', optn.text, optn.et));
     document.getElementById('butn_GI').onclick = getInfo;
     document.getElementById('butn_DF').onclick = downloadAction;
-    document.getElementById('infoType').addEventListener('change', displayTypeParams);
+    document.getElementById('infoType').addEventListener('change', displayEndpointParams);
     if (window.location.hostname === 'pegasus') {
       document.getElementById('siteName').placeholder = 'apesandbox';
     }
   }
 
-  function displayTypeParams() {
+  function displayEndpointParams() {
+    if (document.getElementById('infoType').value === apeEntityType.User) {
+      document.getElementById('userOptions').style.display = 'block';
+    } else {
+      document.getElementById('userOptions').style.display = 'none';
+    }
+
+    if (document.getElementById('infoType').value === apeEntityType.Project) {
+      document.getElementById('projectOptions').style.display = 'block';
+    } else {
+      document.getElementById('projectOptions').style.display = 'none';
+    }
+
     if (document.getElementById('infoType').value === apeEntityType.Template) {
       document.getElementById('templateOptions').style.display = 'block';
     } else {
       document.getElementById('templateOptions').style.display = 'none';
+    }
+
+    if (document.getElementById('infoType').value === apeEntityType.Drawing) {
+      document.getElementById('drawingOptions').style.display = 'block';
+    } else {
+      document.getElementById('drawingOptions').style.display = 'none';
     }
   }
 
@@ -114,6 +132,16 @@ var my_GAMI_NameSpace = function() {
     try {
       let endpointParams = {};
       switch (entityType) {
+        case apeEntityType.User:
+          endpointParams = {
+            active: document.getElementById('usersActive').value,
+          };
+          break;
+        case apeEntityType.Project:
+          endpointParams = {
+            active: document.getElementById('projectActive').value,
+          };
+          break;
         case apeEntityType.Template:
           endpointParams = {
             template_type: document.getElementById('templateType1').value,
@@ -124,9 +152,18 @@ var my_GAMI_NameSpace = function() {
             delete endpointParams.template_type;
           }
           break;
+        case apeEntityType.Drawing:
+          endpointParams = {
+            project_id: document.getElementById('drawingProj').value,
+          };
+          if (!endpointParams.project_id || endpointParams.project_id === 'All') {
+            delete endpointParams.project_id;
+          }
+          break;
         default:
           break;
       }
+      console.log(endpointParams);
       jsonResult = await aGet(site1, entityType, '', endpointParams, rateLimitOption);
     } catch (error) {
       setElementTextDisplay('giErrorText', error, 'block');
@@ -134,7 +171,7 @@ var my_GAMI_NameSpace = function() {
     }
 
     // Display summary info about what was obtained:
-    let infoTypeName = infoTypeOptions.find(x => x.et === entityType).name;
+    let infoTypeName = endpointOptions.find(x => x.et === entityType).name;
     if (jsonResult.length > 1) {
       infoTypeName = infoTypeName + 's';
     }
@@ -204,7 +241,7 @@ var my_GAMI_NameSpace = function() {
     return (
       removeEndOfString(siteName, '.') +
       '_' +
-      infoTypeOptions.find(x => x.et === entityType).filename +
+      endpointOptions.find(x => x.et === entityType).filename +
       '_' +
       currentYYMMDD() +
       '.csv'
