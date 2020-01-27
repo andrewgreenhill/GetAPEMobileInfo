@@ -9,7 +9,7 @@ An assistant for getting lists of data from APE Mobile sites, including:
 By Andrew Greenhill.
 -----------------------------------------------------------------------------*/
 import { aGet, apeEntityType } from './APE_API_Helper.js';
-const gami_version = '0.5.7, beta';
+const gami_version = '0.5.8, beta';
 
 var my_GAMI_NameSpace = function() {
   //A function wrapper simply to create my own 'Get APE Mobile Info' name space
@@ -44,10 +44,6 @@ var my_GAMI_NameSpace = function() {
   ];
   const rateLimitOption = { dontRLUserCheck: true };
 
-  if (!isApeMobileSite(window.location.hostname)) {
-    site1.proxy = 'https://cors-anywhere-ag.herokuapp.com/'; //This proxy prevents blocking by browser SOP
-  }
-
   initialise_web_page(); //Set things up in the web page HTML:
   function initialise_web_page() {
     setElementTextDisplay('versionDisplay', 'Version ' + String(gami_version), 'block');
@@ -57,6 +53,11 @@ var my_GAMI_NameSpace = function() {
     document.getElementById('infoType').addEventListener('change', displayEndpointParams);
     if (window.location.hostname === 'pegasus') {
       document.getElementById('siteName').placeholder = 'apesandbox';
+    }
+    if (isApeMobileSite(window.location.hostname)) {
+      document.getElementById('siteName').placeholder = window.location.hostname;
+    } else {
+      site1.proxy = 'https://cors-anywhere-ag.herokuapp.com/'; //This proxy prevents blocking by browser SOP
     }
   }
 

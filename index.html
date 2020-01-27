@@ -40,8 +40,7 @@
         </form>
 
         <div id='userOptions' class='optionsBox'>
-            <strong>Users</strong>
-            <p></p>
+            <p class="optionsSubtitle">Users Options</p>
             <label for="usersActive" style="margin-right: 15px;">Active setting</label>
             <select name="usersActive" id="usersActive" style="width: 224px;" required>
                 <option value="true">Active</option>
@@ -51,8 +50,7 @@
         </div>
 
         <div id='projectOptions' class='optionsBox'>
-            <strong>Projects</strong>
-            <p></p>
+            <p class="optionsSubtitle">Projects Options</p>
             <label for="projectActive" style="margin-right: 15px;">Active setting</label>
             <select name="projectActive" id="projectActive" style="width: 224px;" required>
                 <option value="true">Active</option>
@@ -62,15 +60,13 @@
         </div>
 
         <div id='drawingOptions' class='optionsBox'>
-            <strong>Drawings & Docs</strong>
-            <p></p>
+            <p class="optionsSubtitle">Drawings & Docs Options</p>
             <label for="drawingProj" style="margin-right: 7px;">Project ID (optional)</label>
-            <input id="drawingProj" name="drawingProj" type="text" style="width: 180px;"/>
+            <input id="drawingProj" name="drawingProj" type="number" style="width: 180px;" min="1"/>
         </div>
 
         <div id='templateOptions' class='optionsBox'>
-            <strong>Templates</strong>
-            <p></p>
+            <p class="optionsSubtitle">Templates Options</p>
             <label for="templateType1" style="margin-right: 20px;">Template type</label>
             <select name="templateType1" id="templateType1" style="width: 212px;" required>
                 <option value="All">All</option>
