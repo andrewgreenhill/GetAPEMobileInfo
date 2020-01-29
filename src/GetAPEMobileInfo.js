@@ -9,7 +9,7 @@ An assistant for getting lists of data from APE Mobile sites, including:
 By Andrew Greenhill.
 -----------------------------------------------------------------------------*/
 import { aGet, apeEntityType } from './APE_API_Helper.js';
-const gami_version = '0.5.8, beta';
+const gami_version = '0.5.9, beta';
 
 var my_GAMI_NameSpace = function() {
   //A function wrapper simply to create my own 'Get APE Mobile Info' name space
@@ -164,7 +164,6 @@ var my_GAMI_NameSpace = function() {
         default:
           break;
       }
-      console.log(endpointParams);
       jsonResult = await aGet(site1, entityType, '', endpointParams, rateLimitOption);
     } catch (error) {
       setElementTextDisplay('giErrorText', error, 'block');
@@ -195,8 +194,10 @@ var my_GAMI_NameSpace = function() {
           'active',
           'created_at',
           'updated_at',
+          'draft_template_href',
+          'draft_template_id',
         ];
-        csv = json2csv(jsonResult, keysToConvert);
+        csv = json2csv4templates(jsonResult, keysToConvert);
         break;
       default:
         keysToConvert = keysOf1stRecord(jsonResult); // Use the 1st record to determine the column headings
@@ -282,6 +283,29 @@ var my_GAMI_NameSpace = function() {
     let csv = jsonArray.map(row => columnHeadings.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','));
     csv.unshift(columnHeadings.join(','));
     return csv.join('\r\n');
+  }
+
+  function json2csv4templates(jsonArray, columnHeadings) {
+    const replacer = (key, value) => (value === null ? '' : value); // Specify how you want to handle null values here
+    const template_types = ['General Memo', 'Issue Memo', 'RFI Memo', 'Action', 'Form'];
+    let csvArray = jsonArray.map(row =>
+      columnHeadings
+        .map(function(fieldName) {
+          switch (fieldName) {
+            case 'draft_template_href':
+              return row.draft_template === undefined ? '' : JSON.stringify(row.draft_template.href, replacer);
+            case 'draft_template_id':
+              return row.draft_template === undefined ? '' : JSON.stringify(row.draft_template.id, replacer);
+            case 'template_type':
+              return row.template_type === undefined ? '' : template_types[row.template_type - 1]; //numbers => words
+            default:
+              return JSON.stringify(row[fieldName], replacer);
+          }
+        })
+        .join(',')
+    );
+    csvArray.unshift(columnHeadings.join(',')); //Add the columnHeadings at the start
+    return csvArray.join('\r\n'); //Return the array as a string.
   }
 
   function downloadFile(content, fileName, contentType) {
