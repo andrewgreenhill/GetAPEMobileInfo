@@ -15,4 +15,7 @@
     font-style: italic;
 }
 
-body { font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif }
+body {
+    font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    /* font-size: 1.3em; */
+}

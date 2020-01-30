@@ -1,15 +1,16 @@
 /*---------------------- Get APE Mobile Info -------------------------
-An assistant for getting lists of data from APE Mobile sites, including:
+An assistant for getting data from APE Mobile sites, including:
 * Users
 * Projects
-* Templates <= with extra details
+* Templates
 * Org Lists
 * Project List Types
+* Drawings & Docs
 
 By Andrew Greenhill.
 -----------------------------------------------------------------------------*/
 import { aGet, apeEntityType } from './APE_API_Helper.js';
-const gami_version = '0.5.9, beta';
+const gami_version = '0.6.0, beta';
 
 var my_GAMI_NameSpace = function() {
   //A function wrapper simply to create my own 'Get APE Mobile Info' name space
@@ -62,6 +63,7 @@ var my_GAMI_NameSpace = function() {
   }
 
   function displayEndpointParams() {
+    setElementTextDisplay('giErrorText', '', 'none');
     if (document.getElementById('infoType').value === apeEntityType.User) {
       document.getElementById('userOptions').style.display = 'block';
     } else {
@@ -199,6 +201,10 @@ var my_GAMI_NameSpace = function() {
         ];
         csv = json2csv4templates(jsonResult, keysToConvert);
         break;
+      case apeEntityType.User:
+        keysToConvert = keysOf1stRecord(jsonResult); // Use the 1st record to determine the column headings
+        csv = json2csv4users(jsonResult, keysToConvert);
+        break;
       default:
         keysToConvert = keysOf1stRecord(jsonResult); // Use the 1st record to determine the column headings
         csv = json2csv(jsonResult, keysToConvert);
@@ -283,6 +289,33 @@ var my_GAMI_NameSpace = function() {
     let csv = jsonArray.map(row => columnHeadings.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','));
     csv.unshift(columnHeadings.join(','));
     return csv.join('\r\n');
+  }
+
+  function json2csv4users(jsonArray, columnHeadings) {
+    console.log(columnHeadings);
+    const replacer = (key, value) => (value === null ? '' : value); // Specify how you want to handle null values here
+    let csvArray = jsonArray.map(row =>
+      columnHeadings
+        .map(function(fieldName) {
+          if (fieldName !== 'user_type') {
+            return JSON.stringify(row[fieldName], replacer);
+          }
+          switch (row.user_type) {
+            case 'standard':
+              return 'Super';
+            case 'operator':
+              return 'Standard';
+            case 'external':
+              return 'External';
+            default:
+              console.error('Unexpected user_type!');
+              return 'Unexpected user_type!';
+          }
+        })
+        .join(',')
+    );
+    csvArray.unshift(columnHeadings.join(',')); //Add the columnHeadings at the start
+    return csvArray.join('\r\n'); //Return the array as a string.
   }
 
   function json2csv4templates(jsonArray, columnHeadings) {
