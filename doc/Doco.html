@@ -10,13 +10,16 @@
 </head>
 <body>
     <h1>Get APE Mobile Info: Documentation / Notes</h1>
+    <h2>Features</h2>
+    <p>It handles more than 1000 items (overcoming the usual limit of the API).</p>
     <h2>Requirements</h2>
     <p>The Site needs to have "API enabled" setting turned on (under Admin =&gt; Organisation)</p>
     <h2>Templates</h2>
     <p>To understand the difference between <em>Draft</em>, <em>Published</em> and <em>Archived</em> templates,
         see <a href="https://apemobile.docs.apiary.io/#reference/forms">https://apemobile.docs.apiary.io/#reference/forms</a>
          => "Form collection"</p>
-    <p>The template_type output is re-mapped from number 1-5 to General Memo, Issue Memo, RFI Memo, Action and Form.</p>
+    <p>The template_type output is re-mapped from numbers 1-5 to <em>General Memo</em>, <em>Issue Memo</em>, <em>RFI Memo</em>, <em>Action</em> and <em>Form</em>.</p>
+    <p>When exporting <em>Published</em> and <em>Archived</em> templates, their parent <em>draft_template_id</em> and <em>draft_template_href</em> is output into the CSV file.</p>
     <h2>Output</h2>
     <p>Output times are currently in 'Z' format.</p>
     <p>How to get out unadjusted data in json format: change the output file extension from csv to json.</p>
