@@ -10,7 +10,7 @@ An assistant for getting data from APE Mobile sites, including:
 By Andrew Greenhill.
 -----------------------------------------------------------------------------*/
 import { aGet, apeEntityType } from './APE_API_Helper.js';
-const gami_version = '0.6.0, beta';
+const gami_version = '0.6.1, beta';
 
 var my_GAMI_NameSpace = function() {
   //A function wrapper simply to create my own 'Get APE Mobile Info' name space
@@ -30,18 +30,26 @@ var my_GAMI_NameSpace = function() {
   //Info types offered to the user, plus names for reporting & filenaming, and EntityType for using it with API helper
   const endpointOptions = [
     { text: 'Users', name: 'user', filename: 'Users', et: apeEntityType.User },
-    { text: 'Projects', name: 'project', filename: 'Projects', et: apeEntityType.Project },
     { text: 'Templates', name: 'template', filename: 'Templates', et: apeEntityType.Template },
     { text: 'Org Lists', name: 'Org List', filename: 'OrgLists', et: apeEntityType.OrgList },
+    { text: 'Projects', name: 'project', filename: 'Projects', et: apeEntityType.Project },
     {
-      text: 'Proj List Types',
+      text: 'Project List Types',
       name: 'Project List Type',
       filename: 'ProjectListTypes',
       et: apeEntityType.ProjectListType,
     },
-    // { text: 'Proj Members', name: 'Project Member', filename: 'ProjectMembers', et: apeEntityType.ProjMember },
-    // { text: 'Proj WBS items', name: 'WBS item', filename: 'ProjectWBSItems', et: apeEntityType.ProjWBSItem },
-    { text: 'Drawings & Docs', name: 'D&D', filename: 'DrawingsDocs', et: apeEntityType.Drawing },
+    // { text: 'Project Lists', name: 'Project List', filename: 'ProjLists', et: apeEntityType.ProjMember },
+    // { text: 'Project Members', name: 'Project Member', filename: 'ProjMembers', et: apeEntityType.ProjMember },
+    // { text: 'Project WBS items', name: 'WBS item', filename: 'ProjWBSItems', et: apeEntityType.ProjWBSItem },
+    { text: 'Drawings/Documents', name: 'D&D', filename: 'DrawingsDocs', et: apeEntityType.Drawing },
+    { text: 'Drawings/Docs Views', name: 'D&D view', filename: 'DDViews', et: apeEntityType.DrawingView },
+    {
+      text: 'Drawings/Docs Annotations',
+      name: 'D&D annotation',
+      filename: 'DDAnnotations',
+      et: apeEntityType.Annotation,
+    },
   ];
   const rateLimitOption = { dontRLUserCheck: true };
 
@@ -64,25 +72,30 @@ var my_GAMI_NameSpace = function() {
 
   function displayEndpointParams() {
     setElementTextDisplay('giErrorText', '', 'none');
-    if (document.getElementById('infoType').value === apeEntityType.User) {
+    let endpointType = document.getElementById('infoType').value;
+    if (endpointType === apeEntityType.User) {
       document.getElementById('userOptions').style.display = 'block';
     } else {
       document.getElementById('userOptions').style.display = 'none';
     }
 
-    if (document.getElementById('infoType').value === apeEntityType.Project) {
+    if (endpointType === apeEntityType.Project) {
       document.getElementById('projectOptions').style.display = 'block';
     } else {
       document.getElementById('projectOptions').style.display = 'none';
     }
 
-    if (document.getElementById('infoType').value === apeEntityType.Template) {
+    if (endpointType === apeEntityType.Template) {
       document.getElementById('templateOptions').style.display = 'block';
     } else {
       document.getElementById('templateOptions').style.display = 'none';
     }
 
-    if (document.getElementById('infoType').value === apeEntityType.Drawing) {
+    if (
+      endpointType === apeEntityType.Drawing ||
+      endpointType === apeEntityType.DrawingView ||
+      endpointType === apeEntityType.Annotation
+    ) {
       document.getElementById('drawingOptions').style.display = 'block';
     } else {
       document.getElementById('drawingOptions').style.display = 'none';
@@ -156,6 +169,8 @@ var my_GAMI_NameSpace = function() {
           }
           break;
         case apeEntityType.Drawing:
+        case apeEntityType.DrawingView:
+        case apeEntityType.Annotation:
           endpointParams = {
             project_id: document.getElementById('drawingProj').value,
           };
