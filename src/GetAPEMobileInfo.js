@@ -10,7 +10,7 @@ An assistant for getting data from APE Mobile sites, including:
 By Andrew Greenhill.
 -----------------------------------------------------------------------------*/
 import { aGet, apeEntityType } from './APE_API_Helper.js';
-const gami_version = '0.6.1, beta';
+const gami_version = '0.6.2, beta';
 
 var my_GAMI_NameSpace = function() {
   //A function wrapper simply to create my own 'Get APE Mobile Info' name space
@@ -39,9 +39,9 @@ var my_GAMI_NameSpace = function() {
       filename: 'ProjectListTypes',
       et: apeEntityType.ProjectListType,
     },
-    // { text: 'Project Lists', name: 'Project List', filename: 'ProjLists', et: apeEntityType.ProjMember },
-    // { text: 'Project Members', name: 'Project Member', filename: 'ProjMembers', et: apeEntityType.ProjMember },
-    // { text: 'Project WBS items', name: 'WBS item', filename: 'ProjWBSItems', et: apeEntityType.ProjWBSItem },
+    { text: 'Project Members', name: 'Project Member', filename: 'ProjMembers', et: apeEntityType.ProjMember },
+    { text: 'Project Lists', name: 'Project List', filename: 'ProjLists', et: apeEntityType.ProjList },
+    { text: 'Project WBS items', name: 'WBS item', filename: 'ProjWBSItems', et: apeEntityType.ProjWBSItem },
     { text: 'Drawings/Documents', name: 'D&D', filename: 'DrawingsDocs', et: apeEntityType.Drawing },
     { text: 'Drawings/Docs Views', name: 'D&D view', filename: 'DDViews', et: apeEntityType.DrawingView },
     {
@@ -83,6 +83,16 @@ var my_GAMI_NameSpace = function() {
       document.getElementById('projectOptions').style.display = 'block';
     } else {
       document.getElementById('projectOptions').style.display = 'none';
+    }
+
+    if (
+      endpointType === apeEntityType.ProjMember ||
+      endpointType === apeEntityType.ProjList ||
+      endpointType === apeEntityType.ProjWBSItem
+    ) {
+      document.getElementById('projChildrenOptions').style.display = 'block';
+    } else {
+      document.getElementById('projChildrenOptions').style.display = 'none';
     }
 
     if (endpointType === apeEntityType.Template) {
@@ -146,6 +156,7 @@ var my_GAMI_NameSpace = function() {
     // Get the collection of data, in a JSON array:
     jsonResult = '';
     try {
+      let entityId = '';
       let endpointParams = {};
       switch (entityType) {
         case apeEntityType.User:
@@ -157,6 +168,17 @@ var my_GAMI_NameSpace = function() {
           endpointParams = {
             active: document.getElementById('projectActive').value,
           };
+          break;
+        case apeEntityType.ProjMember:
+        case apeEntityType.ProjList:
+        case apeEntityType.ProjWBSItem:
+          let selectedProj = document.getElementById('selectedProj').value;
+          if (selectedProj > 0) {
+            entityId = selectedProj;
+          } else {
+            setElementTextDisplay('giErrorText', 'Please enter a Project ID', 'block');
+            return;
+          }
           break;
         case apeEntityType.Template:
           endpointParams = {
@@ -181,7 +203,7 @@ var my_GAMI_NameSpace = function() {
         default:
           break;
       }
-      jsonResult = await aGet(site1, entityType, '', endpointParams, rateLimitOption);
+      jsonResult = await aGet(site1, entityType, entityId, endpointParams, rateLimitOption);
     } catch (error) {
       setElementTextDisplay('giErrorText', error, 'block');
       return;
