@@ -5,4 +5,4 @@
 * Org Lists
 * Project List Types
 * Drawings & Documents
-* [etc]
+* etc

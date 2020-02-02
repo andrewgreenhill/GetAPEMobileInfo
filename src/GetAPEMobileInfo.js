@@ -10,7 +10,7 @@ An assistant for getting data from APE Mobile sites, including:
 By Andrew Greenhill.
 -----------------------------------------------------------------------------*/
 import { aGet, apeEntityType } from './APE_API_Helper.js';
-const gami_version = '0.6.2, beta';
+const gami_version = '0.6.3, beta';
 
 var my_GAMI_NameSpace = function() {
   //A function wrapper simply to create my own 'Get APE Mobile Info' name space
@@ -28,30 +28,51 @@ var my_GAMI_NameSpace = function() {
   };
 
   //Info types offered to the user, plus names for reporting & filenaming, and EntityType for using it with API helper
-  const endpointOptions = [
-    { text: 'Users', name: 'user', filename: 'Users', et: apeEntityType.User },
-    { text: 'Templates', name: 'template', filename: 'Templates', et: apeEntityType.Template },
-    { text: 'Org Lists', name: 'Org List', filename: 'OrgLists', et: apeEntityType.OrgList },
-    { text: 'Projects', name: 'project', filename: 'Projects', et: apeEntityType.Project },
-    {
-      text: 'Project List Types',
-      name: 'Project List Type',
-      filename: 'ProjectListTypes',
-      et: apeEntityType.ProjectListType,
-    },
-    { text: 'Project Members', name: 'Project Member', filename: 'ProjMembers', et: apeEntityType.ProjMember },
-    { text: 'Project Lists', name: 'Project List', filename: 'ProjLists', et: apeEntityType.ProjList },
-    { text: 'Project WBS items', name: 'WBS item', filename: 'ProjWBSItems', et: apeEntityType.ProjWBSItem },
-    { text: 'Drawings/Documents', name: 'D&D', filename: 'DrawingsDocs', et: apeEntityType.Drawing },
-    { text: 'Drawings/Docs Views', name: 'D&D view', filename: 'DDViews', et: apeEntityType.DrawingView },
-    {
-      text: 'Drawings/Docs Annotations',
-      name: 'D&D annotation',
-      filename: 'DDAnnotations',
-      et: apeEntityType.Annotation,
-    },
-  ];
+  let endpointOptions = [];
+  if (valueOfQueryStringParam('options') !== 'all') {
+    endpointOptions = [
+      { text: 'Users', name: 'user', filename: 'Users', et: apeEntityType.User },
+      { text: 'Templates', name: 'template', filename: 'Templates', et: apeEntityType.Template },
+      { text: 'Org Lists', name: 'Org List', filename: 'OrgLists', et: apeEntityType.OrgList },
+      { text: 'Projects', name: 'project', filename: 'Projects', et: apeEntityType.Project },
+      { text: 'Drawings/Documents', name: 'D&D', filename: 'DrawingsDocs', et: apeEntityType.Drawing },
+    ];
+  } else {
+    endpointOptions = [
+      { text: 'Users', name: 'user', filename: 'Users', et: apeEntityType.User },
+      { text: 'Templates', name: 'template', filename: 'Templates', et: apeEntityType.Template },
+      { text: 'Org Lists', name: 'Org List', filename: 'OrgLists', et: apeEntityType.OrgList },
+      { text: 'Projects', name: 'project', filename: 'Projects', et: apeEntityType.Project },
+      {
+        text: 'Project List Types',
+        name: 'Project List Type',
+        filename: 'ProjectListTypes',
+        et: apeEntityType.ProjectListType,
+      },
+      { text: 'Project Members', name: 'Project Member', filename: 'ProjMembers', et: apeEntityType.ProjMember },
+      { text: 'Project Lists', name: 'Project List', filename: 'ProjLists', et: apeEntityType.ProjList },
+      { text: 'Project WBS items', name: 'WBS item', filename: 'ProjWBSItems', et: apeEntityType.ProjWBSItem },
+      { text: 'Actions', name: 'action', filename: 'Actions', et: apeEntityType.Action },
+      { text: 'Forms', name: 'form', filename: 'Forms', et: apeEntityType.Form },
+      { text: 'Memos', name: 'memo', filename: 'Memos', et: apeEntityType.Memo },
+      { text: 'Punch Lists', name: 'punch list', filename: 'PunchLists', et: apeEntityType.PunchList },
+      { text: 'Drawings/Documents', name: 'D&D', filename: 'DrawingsDocs', et: apeEntityType.Drawing },
+      { text: 'Drawings/Docs Views', name: 'D&D view', filename: 'DDViews', et: apeEntityType.DrawingView },
+      {
+        text: 'Drawings/Docs Annotations',
+        name: 'D&D annotation',
+        filename: 'DDAnnotations',
+        et: apeEntityType.Annotation,
+      },
+    ];
+  }
   const rateLimitOption = { dontRLUserCheck: true };
+
+  function valueOfQueryStringParam(paramName) {
+    var url_string = window.location.href;
+    var url = new URL(url_string);
+    return url.searchParams.get(paramName);
+  }
 
   initialise_web_page(); //Set things up in the web page HTML:
   function initialise_web_page() {
