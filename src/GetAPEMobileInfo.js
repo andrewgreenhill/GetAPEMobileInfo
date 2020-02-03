@@ -122,6 +122,12 @@ var my_GAMI_NameSpace = function() {
       document.getElementById('templateOptions').style.display = 'none';
     }
 
+    if (endpointType === apeEntityType.Form) {
+      document.getElementById('formOptions').style.display = 'block';
+    } else {
+      document.getElementById('formOptions').style.display = 'none';
+    }
+
     if (
       endpointType === apeEntityType.Drawing ||
       endpointType === apeEntityType.DrawingView ||
@@ -210,6 +216,21 @@ var my_GAMI_NameSpace = function() {
           if (endpointParams.template_type === 'All') {
             delete endpointParams.template_type;
           }
+          break;
+        case apeEntityType.Form:
+          endpointParams = {
+            status: document.getElementById('formStatus').value,
+            project_id: document.getElementById('formProj').value,
+            draft_template_id: document.getElementById('formDraftTemID').value,
+            template_id: document.getElementById('formPublishTemID').value,
+            limit: document.getElementById('formLimit').value,
+          };
+          //Remove any endpoint parameters that have no value:
+          Object.keys(endpointParams).forEach(function(ky) {
+            if (!endpointParams[ky]) {
+              delete endpointParams[ky];
+            }
+          });
           break;
         case apeEntityType.Drawing:
         case apeEntityType.DrawingView:
@@ -354,7 +375,6 @@ var my_GAMI_NameSpace = function() {
   }
 
   function json2csv4users(jsonArray, columnHeadings) {
-    console.log(columnHeadings);
     const replacer = (key, value) => (value === null ? '' : value);
     let csvArray = jsonArray.map(row =>
       columnHeadings

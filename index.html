@@ -96,6 +96,30 @@
             <br>
         </div>
 
+        <div id='formOptions' class='optionsBox'>
+            <p class="optionsSubtitle">Forms Options</p>
+            <label for="formStatus" style="margin-right: 63px;">Status</label>
+            <select name="formStatus" id="formStatus" style="width: 227px;">
+                <option value="">All</option>
+                <option value="draft">Draft</option>
+                <option value="open">Open</option>
+                <option value="closed">Closed</option>
+            </select>
+            <p></p>
+            <label for="formProj" style="margin-right: 37px;">Project ID</label>
+            <input id="formProj" name="formProj" type="number" style="width: 224px;" min="1"/>
+            <p></p>
+            <label for="formDraftTemID" style="margin-right: 7px;">Draft Template ID</label>
+            <input id="formDraftTemID" name="formDraftTemID" type="number" style="width: 194px;" min="1"/>
+            <p></p>
+            <label for="formPublishTemID" style="margin-right: 7px;">Template ID</label>
+            <input id="formPublishTemID" name="formPublishTemID" type="number" style="width: 224px;" min="1"/>
+            <p></p>
+            <label for="formLimit" style="margin-right: 7px;">Limit</label>
+            <input id="formLimit" name="formLimit" type="number" style="width: 224px;" min="1"/>
+            <br>
+        </div>
+
         <p></p>
         <button id='butn_GI' style="display: block;">Get list</button>
         <p id='giErrorText'></p>
