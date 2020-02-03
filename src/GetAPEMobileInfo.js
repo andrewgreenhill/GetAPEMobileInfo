@@ -10,7 +10,7 @@ An assistant for getting data from APE Mobile sites, including:
 By Andrew Greenhill.
 -----------------------------------------------------------------------------*/
 import { aGet, apeEntityType } from './APE_API_Helper.js';
-const gami_version = '0.6.3, beta';
+const gami_version = '0.6.4, beta';
 
 var my_GAMI_NameSpace = function() {
   //A function wrapper simply to create my own 'Get APE Mobile Info' name space
@@ -343,20 +343,24 @@ var my_GAMI_NameSpace = function() {
   }
 
   function json2csv(jsonArray, columnHeadings) {
-    const replacer = (key, value) => (value === null ? '' : value); // Specify how you want to handle null values here
-    let csv = jsonArray.map(row => columnHeadings.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','));
-    csv.unshift(columnHeadings.join(','));
-    return csv.join('\r\n');
+    const replacer = (key, value) => (value === null ? '' : value);
+    let csvArray = jsonArray.map(row =>
+      columnHeadings
+        .map(fieldName => (row[fieldName] === undefined ? '' : JSON.stringify(row[fieldName], replacer)))
+        .join(',')
+    );
+    csvArray.unshift(columnHeadings.join(','));
+    return csvArray.join('\r\n');
   }
 
   function json2csv4users(jsonArray, columnHeadings) {
     console.log(columnHeadings);
-    const replacer = (key, value) => (value === null ? '' : value); // Specify how you want to handle null values here
+    const replacer = (key, value) => (value === null ? '' : value);
     let csvArray = jsonArray.map(row =>
       columnHeadings
         .map(function(fieldName) {
           if (fieldName !== 'user_type') {
-            return JSON.stringify(row[fieldName], replacer);
+            return row[fieldName] === undefined ? '' : JSON.stringify(row[fieldName], replacer);
           }
           switch (row.user_type) {
             case 'standard':
@@ -377,7 +381,7 @@ var my_GAMI_NameSpace = function() {
   }
 
   function json2csv4templates(jsonArray, columnHeadings) {
-    const replacer = (key, value) => (value === null ? '' : value); // Specify how you want to handle null values here
+    const replacer = (key, value) => (value === null ? '' : value);
     const template_types = ['General Memo', 'Issue Memo', 'RFI Memo', 'Action', 'Form'];
     let csvArray = jsonArray.map(row =>
       columnHeadings
@@ -390,7 +394,7 @@ var my_GAMI_NameSpace = function() {
             case 'template_type':
               return row.template_type === undefined ? '' : template_types[row.template_type - 1]; //numbers => words
             default:
-              return JSON.stringify(row[fieldName], replacer);
+              return row[fieldName] === undefined ? '' : JSON.stringify(row[fieldName], replacer);
           }
         })
         .join(',')
