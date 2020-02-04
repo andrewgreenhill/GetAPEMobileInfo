@@ -91,52 +91,35 @@ var my_GAMI_NameSpace = function() {
     }
   }
 
+  //A simple function to help with turning an element's display on/off:
+  function blockOrNone(x) {
+    return x ? 'block' : 'none';
+  }
+
   function displayEndpointParams() {
     setElementTextDisplay('giErrorText', '', 'none');
-    let endpointType = document.getElementById('infoType').value;
-    if (endpointType === apeEntityType.User) {
-      document.getElementById('userOptions').style.display = 'block';
-    } else {
-      document.getElementById('userOptions').style.display = 'none';
-    }
+    let endpoint = document.getElementById('infoType').value;
+    document.getElementById('userOptions').style.display = blockOrNone(endpoint === apeEntityType.User);
+    document.getElementById('projectOptions').style.display = blockOrNone(endpoint === apeEntityType.Project);
+    document.getElementById('templateOptions').style.display = blockOrNone(endpoint === apeEntityType.Template);
+    document.getElementById('formOptions').style.display = blockOrNone(endpoint === apeEntityType.Form);
+    document.getElementById('orgListOptions').style.display = blockOrNone(endpoint === apeEntityType.OrgList);
+    document.getElementById('projLTOptions').style.display = blockOrNone(endpoint === apeEntityType.ProjectListType);
+    document.getElementById('actionOptions').style.display = blockOrNone(endpoint === apeEntityType.Action);
+    document.getElementById('memoOptions').style.display = blockOrNone(endpoint === apeEntityType.Memo);
+    document.getElementById('punchListsOptions').style.display = blockOrNone(endpoint === apeEntityType.PunchList);
 
-    if (endpointType === apeEntityType.Project) {
-      document.getElementById('projectOptions').style.display = 'block';
-    } else {
-      document.getElementById('projectOptions').style.display = 'none';
-    }
+    document.getElementById('projChildrenOptions').style.display = blockOrNone(
+      endpoint === apeEntityType.ProjMember ||
+        endpoint === apeEntityType.ProjList ||
+        endpoint === apeEntityType.ProjWBSItem
+    );
 
-    if (
-      endpointType === apeEntityType.ProjMember ||
-      endpointType === apeEntityType.ProjList ||
-      endpointType === apeEntityType.ProjWBSItem
-    ) {
-      document.getElementById('projChildrenOptions').style.display = 'block';
-    } else {
-      document.getElementById('projChildrenOptions').style.display = 'none';
-    }
-
-    if (endpointType === apeEntityType.Template) {
-      document.getElementById('templateOptions').style.display = 'block';
-    } else {
-      document.getElementById('templateOptions').style.display = 'none';
-    }
-
-    if (endpointType === apeEntityType.Form) {
-      document.getElementById('formOptions').style.display = 'block';
-    } else {
-      document.getElementById('formOptions').style.display = 'none';
-    }
-
-    if (
-      endpointType === apeEntityType.Drawing ||
-      endpointType === apeEntityType.DrawingView ||
-      endpointType === apeEntityType.Annotation
-    ) {
-      document.getElementById('drawingOptions').style.display = 'block';
-    } else {
-      document.getElementById('drawingOptions').style.display = 'none';
-    }
+    document.getElementById('drawingOptions').style.display = blockOrNone(
+      endpoint === apeEntityType.Drawing ||
+        endpoint === apeEntityType.DrawingView ||
+        endpoint === apeEntityType.Annotation
+    );
   }
 
   function addOptionToSelectList(listID, text, value) {
