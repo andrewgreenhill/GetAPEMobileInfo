@@ -80,6 +80,7 @@ var my_GAMI_NameSpace = function() {
     endpointOptions.forEach(optn => addOptionToSelectList('infoType', optn.text, optn.et));
     document.getElementById('butn_GI').onclick = getInfo;
     document.getElementById('butn_DF').onclick = downloadAction;
+    document.getElementById('butn_pdf').onclick = display_a_PDF;
     document.getElementById('infoType').addEventListener('change', displayEndpointParams);
     if (window.location.hostname === 'pegasus') {
       document.getElementById('siteName').placeholder = 'apesandbox';
@@ -94,6 +95,14 @@ var my_GAMI_NameSpace = function() {
   //A simple function to help with turning an element's display on/off:
   function blockOrNone(x) {
     return x ? 'block' : 'none';
+  }
+
+  async function display_a_PDF() {
+    let pdfBlob = await aGet(site1, apeEntityType.Form, jsonResult[0].id, '', { outputTo: 'pdf' });
+    const obj_url = window.URL.createObjectURL(pdfBlob);
+    const iframe = document.getElementById('viewer');
+    iframe.setAttribute('src', obj_url);
+    window.URL.revokeObjectURL(obj_url);
   }
 
   function displayEndpointParams() {
@@ -240,6 +249,10 @@ var my_GAMI_NameSpace = function() {
       infoTypeName = infoTypeName + 's';
     }
     setElementTextDisplay('resultSummaryText', `Got ${jsonResult.length} ${infoTypeName}`, 'block');
+
+    document.getElementById('pdfViewer').style.display = blockOrNone(
+      document.getElementById('infoType').value === apeEntityType.Form && jsonResult.length > 0
+    );
 
     // Convert jsonResult to CSV
     csv = '';
