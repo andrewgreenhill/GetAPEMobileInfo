@@ -98,11 +98,23 @@ var my_GAMI_NameSpace = function() {
   }
 
   async function display_a_PDF() {
-    let pdfBlob = await aGet(site1, apeEntityType.Form, jsonResult[0].id, '', { outputTo: 'pdf' });
-    const obj_url = window.URL.createObjectURL(pdfBlob);
-    const iframe = document.getElementById('viewer');
-    iframe.setAttribute('src', obj_url);
-    window.URL.revokeObjectURL(obj_url);
+    let formID = -1; //Find the ID for the latest form that has status 1 or 4 (open or closed)
+    for (var i = jsonResult.length - 1; i >= 0; i--) {
+      if (jsonResult[i].status === 1 || jsonResult[i].status === 4) {
+        formID = jsonResult[i].id;
+        break;
+      }
+    }
+    if (formID < 0) {
+      setElementTextDisplay('giErrorText', 'None of those ' + String(jsonResult.length) + ' forms have PDFs!', 'block');
+      return;
+    } else {
+      let pdfBlob = await aGet(site1, apeEntityType.Form, formID, '', { outputTo: 'pdf' });
+      const obj_url = window.URL.createObjectURL(pdfBlob);
+      const iframe = document.getElementById('viewer');
+      iframe.setAttribute('src', obj_url);
+      window.URL.revokeObjectURL(obj_url);
+    }
   }
 
   function displayEndpointParams() {
