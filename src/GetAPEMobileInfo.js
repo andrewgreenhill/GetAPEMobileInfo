@@ -10,7 +10,7 @@ An assistant for getting data from APE Mobile sites, including:
 By Andrew Greenhill.
 -----------------------------------------------------------------------------*/
 import { aGet, apeEntityType } from './APE_API_Helper.js';
-const gami_version = '0.6.4, beta';
+const gami_version = '0.6.5, beta';
 
 var my_GAMI_NameSpace = function() {
   //A function wrapper simply to create my own 'Get APE Mobile Info' name space
@@ -66,7 +66,6 @@ var my_GAMI_NameSpace = function() {
       },
     ];
   }
-  const rateLimitOption = { dontRLUserCheck: true };
 
   function valueOfQueryStringParam(paramName) {
     var url_string = window.location.href;
@@ -87,6 +86,7 @@ var my_GAMI_NameSpace = function() {
     }
     if (isApeMobileSite(window.location.hostname)) {
       document.getElementById('siteName').placeholder = window.location.hostname;
+      document.getElementById('siteName').value = window.location.hostname;
     } else {
       site1.proxy = 'https://cors-anywhere-ag.herokuapp.com/'; //This proxy prevents blocking by browser SOP
     }
@@ -249,7 +249,7 @@ var my_GAMI_NameSpace = function() {
         default:
           break;
       }
-      jsonResult = await aGet(site1, entityType, entityId, endpointParams, rateLimitOption);
+      jsonResult = await aGet(site1, entityType, entityId, endpointParams, { dontRLUserCheck: true });
     } catch (error) {
       setElementTextDisplay('giErrorText', error, 'block');
       return;
