@@ -31,7 +31,7 @@ body {
     z-index: 1; /* Stay on top */
     top: 0; /* Stay at the top */
     left: 0;
-    background-color: #142639;
+    background: linear-gradient(180deg, #1E3751, #0D1B29);
     overflow-x: hidden; /* Disable horizontal scroll */
     padding-top: 20px;
     margin: 0px;
