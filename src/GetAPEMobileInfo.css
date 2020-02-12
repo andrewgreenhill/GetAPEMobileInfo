@@ -52,22 +52,27 @@ body {
     left: 57px;
 }
 #gradientLine {
-    width: 100%
-    background-color: rosybrown;
+    width: 100%;
     margin: 0px;
     border: 0px;
-    height: 5px;
-    background: linear-gradient(0deg, white, #aaa);
+    height: 6px;
+    background: linear-gradient(0deg, white, #adadad);
 }
 #mainArea {
     left: 57px;
     width: calc(100% - 97px);
-    height: calc(100% - 110px);
+    height: calc(100% - 111px);
     background-color: white;
     margin: 0px;
     border: 0px;
     padding: 20px;
     position: absolute;
+}
+
+.butnStyle {
+    /* background-color: #7df37f; */
+    background: linear-gradient(0deg, #eee, #f8f8f8);
+    font-size: 0.9em;
 }
 
 h1 {
