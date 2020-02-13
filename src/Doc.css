@@ -1,3 +1,9 @@
 h1 {
+    margin-top: 0px;
+    margin-left: 0%;
     font-size: 1.8em;
+}
+
+#mainArea {
+    margin-left: 1%;
 }

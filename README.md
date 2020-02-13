@@ -3,6 +3,6 @@
 * Projects
 * Templates
 * Org Lists
-* Project List Types
 * Drawings & Documents
+* Project List Types
 * etc
