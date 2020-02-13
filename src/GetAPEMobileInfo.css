@@ -1,7 +1,9 @@
 #title {
     width: 66%;
     display: inline-block;
+    padding-top: 0px;
     padding-bottom: 0px;
+    margin-top: 0px;
     margin-bottom: 0px;
     font-weight: normal;
 }
@@ -10,8 +12,11 @@
     width: 31%;
     display: inline-block;
     text-align: right;
+    padding-top: 25px;
     padding-bottom: 0px;
+    margin-top: 0px;
     margin-bottom: 0px;
+    vertical-align: top;
 }
 
 header {
@@ -37,11 +42,42 @@ body {
     margin: 0px;
     border: 0px;
 }
+@media (max-width: 650px) {
+    #sidebar {
+      width: 48px;
+    }
+    #mainArea {
+      width: calc(100% - 88px);
+    }
+  }
+@media (max-width: 450px) {
+    #sidebar {
+      width: 38px;
+    }
+    #mainArea {
+      width: calc(100% - 78px);
+    }
+  }
+
+.apeLogo {
+    position: relative;
+    top: 4px;
+    left: 4px;
+    height: 40px;
+}
+
+.helpIcon {
+    display: inline-block;
+    margin-left: 12px;
+    width: 23px;
+    height: 23px;
+}
+
 #topbar {
     overflow: hidden;
     background-color: white;
     height: 49px;
-    width: calc(100% - 97px);
+    width: calc(99% - 97px);
     margin: 0px;
     border: 0px;
     position: relative;
@@ -60,12 +96,16 @@ body {
 }
 #mainArea {
     left: 57px;
-    width: calc(100% - 97px);
-    height: calc(100% - 111px);
+    width: calc(97% - 57px);
+    height: calc(100% - 96px);
     background-color: white;
     margin: 0px;
+    margin-left: 1%;
     border: 0px;
-    padding: 20px;
+    padding-left: 1%;
+    padding-right: 1%;
+    padding-top: 15px;
+    padding-bottom: 10px;
     position: absolute;
 }
 
@@ -76,17 +116,19 @@ body {
 }
 
 h1 {
-    margin-left: 3%;
+    margin-left: 0%;
     font-size: 1.75em;
     font-weight: normal;
 }
 
 #versionDisplay {
-    margin-left: 2%;
+    margin-left: 0%;
+    margin-top: 10px;
+    margin-bottom: 25px;
 }
 
 main {
-    margin-left: 2%;
+    margin-left: 0%;
     /* background-color: #E9ECF0; */
 }
 
