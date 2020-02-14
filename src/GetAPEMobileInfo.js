@@ -110,6 +110,7 @@ var my_GAMI_NameSpace = function() {
       return;
     } else {
       let pdfBlob = await aGet(site1, apeEntityType.Form, formID, '', { outputTo: 'pdf' });
+      // Should test whether pdfBlob is ok before proceeding
       const obj_url = window.URL.createObjectURL(pdfBlob);
       const iframe = document.getElementById('viewer');
       iframe.setAttribute('src', obj_url);
