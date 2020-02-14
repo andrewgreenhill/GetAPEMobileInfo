@@ -323,7 +323,17 @@ async function checkApeUserPermissions(site) {
   return userJson.active && userJson.type === 0;
 }
 
-export async function aGet(site, entityType, entityId = '', entityParams = {}, specialParams = {}, fetchParams = {}) {
+export async function aGet(
+  site,
+  entityType,
+  entityId = '',
+  entityParamsA = {},
+  specialParamsA = {},
+  fetchParamsA = {}
+) {
+  let entityParams = cloneObject(entityParamsA); //Making copies of the object Arguments to avoid creating side effects
+  let specialParams = cloneObject(specialParamsA);
+  let fetchParams = cloneObject(fetchParamsA);
   if (!(await checkPermissions(site, entityType, entityId, specialParams))) {
     verboseConLog(`Don't have permission for '${entityType}' '${entityId}' on ${site.name}`);
     throw new Error(`Don't have permission for '${entityType}' '${entityId}' on ${site.name}`);
@@ -629,6 +639,17 @@ function verboseConLog(x, tag = '') {
 
 export function conErr(x) {
   console.error(x);
+}
+
+function cloneObject(obj) {
+  //From https://stackoverflow.com/questions/728360/how-do-i-correctly-clone-a-javascript-object
+
+  if (obj === null || 'object' !== typeof obj) return obj;
+  var copy = obj.constructor();
+  for (var attr in obj) {
+    if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+  }
+  return copy;
 }
 
 export var saveBlob = (function() {
