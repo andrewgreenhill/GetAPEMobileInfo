@@ -388,12 +388,16 @@ var my_GAMI_NameSpace = function() {
   }
 
   function json2csvKeepingLFCR(jsonArray, columnHeadings) {
-    //AG's variant of json2csv that keeps LineFeed CarriageReturn pairs instead of turning them into \r\n
+    //AG's variant of json2csv that keeps LineFeed CarriageReturn pairs (and CR) instead of turning them into \r\n (or \n)
     const replacer = (key, value) => (value === null ? '' : value);
     let csvArray = jsonArray.map(row =>
       columnHeadings
         .map(fieldName =>
-          row[fieldName] === undefined ? '' : JSON.stringify(row[fieldName], replacer).replace(/\\r\\n/gm, '\r\n')
+          row[fieldName] === undefined
+            ? ''
+            : JSON.stringify(row[fieldName], replacer)
+                .replace(/\\r\\n/gm, '\r\n')
+                .replace(/\\n/gm, '\n')
         )
         .join(',')
     );
