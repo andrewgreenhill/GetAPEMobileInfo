@@ -293,6 +293,10 @@ var my_GAMI_NameSpace = function() {
         keysToConvert = keysOf1stRecord(jsonResult); // Use the 1st record to determine the column headings
         csv = json2csv4users(jsonResult, keysToConvert);
         break;
+      case apeEntityType.Project:
+        keysToConvert = keysOf1stRecord(jsonResult); // Use the 1st record to determine the column headings
+        csv = json2csvKeepingLFCR(jsonResult, keysToConvert); //Keeping LFCR because Description can be multi-line
+        break;
       default:
         keysToConvert = keysOf1stRecord(jsonResult); // Use the 1st record to determine the column headings
         csv = json2csv(jsonResult, keysToConvert);
@@ -377,6 +381,20 @@ var my_GAMI_NameSpace = function() {
     let csvArray = jsonArray.map(row =>
       columnHeadings
         .map(fieldName => (row[fieldName] === undefined ? '' : JSON.stringify(row[fieldName], replacer)))
+        .join(',')
+    );
+    csvArray.unshift(columnHeadings.join(','));
+    return csvArray.join('\r\n');
+  }
+
+  function json2csvKeepingLFCR(jsonArray, columnHeadings) {
+    //AG's variant of json2csv that keeps LineFeed CarriageReturn pairs instead of turning them into \r\n
+    const replacer = (key, value) => (value === null ? '' : value);
+    let csvArray = jsonArray.map(row =>
+      columnHeadings
+        .map(fieldName =>
+          row[fieldName] === undefined ? '' : JSON.stringify(row[fieldName], replacer).replace(/\\r\\n/gm, '\r\n')
+        )
         .join(',')
     );
     csvArray.unshift(columnHeadings.join(','));
