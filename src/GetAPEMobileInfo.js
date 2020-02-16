@@ -392,12 +392,13 @@ var my_GAMI_NameSpace = function() {
     const replacer = (key, value) => (value === null ? '' : value);
     let csvArray = jsonArray.map(row =>
       columnHeadings
-        .map(fieldName =>
-          row[fieldName] === undefined
-            ? ''
-            : JSON.stringify(row[fieldName], replacer)
-                .replace(/\\r\\n/gm, '\r\n')
-                .replace(/\\n/gm, '\n')
+        .map(
+          fieldName =>
+            row[fieldName] === undefined
+              ? ''
+              : JSON.stringify(row[fieldName], replacer)
+                  .replace(/\\r\\n/gm, '\r\n') //Replace LF+CR pair
+                  .replace(/\\n/gm, '\n') //Replace CR
         )
         .join(',')
     );
