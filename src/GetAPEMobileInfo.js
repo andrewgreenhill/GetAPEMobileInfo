@@ -4,8 +4,8 @@ An assistant for getting data from APE Mobile sites, including:
 * Projects
 * Templates
 * Org Lists
-* Project List Types
 * Drawings & Docs
+* Project List Types, etc
 
 By Andrew Greenhill.
 -----------------------------------------------------------------------------*/
@@ -97,27 +97,6 @@ var my_GAMI_NameSpace = function() {
     return x ? 'block' : 'none';
   }
 
-  async function display_a_PDF() {
-    let formID = -1; //Find the ID for the latest form that has status 1 or 4 (open or closed)
-    for (var i = jsonResult.length - 1; i >= 0; i--) {
-      if (jsonResult[i].status === 1 || jsonResult[i].status === 4) {
-        formID = jsonResult[i].id;
-        break;
-      }
-    }
-    if (formID < 0) {
-      setElementTextDisplay('giErrorText', 'None of those ' + String(jsonResult.length) + ' forms have PDFs!', 'block');
-      return;
-    } else {
-      let pdfBlob = await aGet(site1, apeEntityType.Form, formID, '', { outputTo: 'pdf' });
-      // Should test whether pdfBlob is ok before proceeding
-      const obj_url = window.URL.createObjectURL(pdfBlob);
-      const iframe = document.getElementById('viewer');
-      iframe.setAttribute('src', obj_url);
-      window.URL.revokeObjectURL(obj_url);
-    }
-  }
-
   function displayEndpointParams() {
     setElementTextDisplay('giErrorText', '', 'none');
     let endpoint = document.getElementById('infoType').value;
@@ -185,7 +164,7 @@ var my_GAMI_NameSpace = function() {
       return;
     }
 
-    // Get the collection of data, in a JSON array:
+    // Get the list of data in a JSON array:
     jsonResult = '';
     try {
       let entityId = '';
@@ -209,6 +188,11 @@ var my_GAMI_NameSpace = function() {
             entityId = selectedProj;
           } else {
             setElementTextDisplay('giErrorText', 'Please enter a Project ID', 'block');
+            // Not yet complete functionality ~placeholder:
+            // For the 3 project children endpoints, add ability to get data from all projects
+            // (and make projectID not 'required' in the HTML page).
+            // let projectsList = await aGet(site1, apeEntityType.Project, '', {}, { dontRLUserCheck: true });
+            // projectsList.forEach(x => console.log(x.name));
             return;
           }
           break;
@@ -281,6 +265,7 @@ var my_GAMI_NameSpace = function() {
           'template_type',
           'version',
           'published_version',
+          // 'filename',
           'active',
           'created_at',
           'updated_at',
@@ -388,7 +373,7 @@ var my_GAMI_NameSpace = function() {
   }
 
   function json2csvKeepingLFCR(jsonArray, columnHeadings) {
-    //AG's variant of json2csv that keeps LineFeed CarriageReturn pairs (and CR) instead of turning them into \r\n (or \n)
+    //A variant of json2csv that keeps LineFeed CarriageReturn pairs (and CR) instead of turning them into \r\n (or \n)
     const replacer = (key, value) => (value === null ? '' : value);
     let csvArray = jsonArray.map(row =>
       columnHeadings
@@ -407,6 +392,7 @@ var my_GAMI_NameSpace = function() {
   }
 
   function json2csv4users(jsonArray, columnHeadings) {
+    //A variant of json2csv for Users data that re-maps the user_type descriptions to newer terminology
     const replacer = (key, value) => (value === null ? '' : value);
     let csvArray = jsonArray.map(row =>
       columnHeadings
@@ -433,6 +419,7 @@ var my_GAMI_NameSpace = function() {
   }
 
   function json2csv4templates(jsonArray, columnHeadings) {
+    //A variant of json2csv that handles draft template details (because they're inside an object)
     const replacer = (key, value) => (value === null ? '' : value);
     const template_types = ['General Memo', 'Issue Memo', 'RFI Memo', 'Action', 'Form'];
     let csvArray = jsonArray.map(row =>
@@ -463,6 +450,27 @@ var my_GAMI_NameSpace = function() {
     // document.body.appendChild(downloadLink);
     downloadLink.click();
     // document.body.removeChild(downloadLink);
+  }
+
+  async function display_a_PDF() {
+    let formID = -1; //Find the ID for the latest form that has status 1 or 4 (open or closed)
+    for (var i = jsonResult.length - 1; i >= 0; i--) {
+      if (jsonResult[i].status === 1 || jsonResult[i].status === 4) {
+        formID = jsonResult[i].id;
+        break;
+      }
+    }
+    if (formID < 0) {
+      setElementTextDisplay('giErrorText', 'None of those ' + String(jsonResult.length) + ' forms have PDFs!', 'block');
+      return;
+    } else {
+      let pdfBlob = await aGet(site1, apeEntityType.Form, formID, '', { outputTo: 'pdf' });
+      // Should test whether pdfBlob is ok before proceeding
+      const obj_url = window.URL.createObjectURL(pdfBlob);
+      const iframe = document.getElementById('viewer');
+      iframe.setAttribute('src', obj_url);
+      window.URL.revokeObjectURL(obj_url);
+    }
   }
 };
 my_GAMI_NameSpace(); //End of my_GAMI_NameSpace function; now run that.
