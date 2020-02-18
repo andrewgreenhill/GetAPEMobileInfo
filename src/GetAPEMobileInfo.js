@@ -77,12 +77,13 @@ var my_GAMI_NameSpace = function() {
   function initialise_web_page() {
     setElementTextDisplay('versionDisplay', 'Version ' + String(gami_version), 'block');
     endpointOptions.forEach(optn => addOptionToSelectList('infoType', optn.text, optn.et));
-    document.getElementById('butn_GI').onclick = getInfo;
+    document.getElementById('butn_GI').onclick = getInfoHandler;
     document.getElementById('butn_DF').onclick = downloadAction;
-    document.getElementById('butn_pdf').onclick = display_a_PDF;
+    document.getElementById('butn_pdf').onclick = display_a_PDF_Handler;
     document.getElementById('infoType').addEventListener('change', displayEndpointParams);
     if (window.location.hostname === 'pegasus') {
       document.getElementById('siteName').placeholder = 'apesandbox';
+      document.getElementById('siteName').required = false;
     }
     if (isApeMobileSite(window.location.hostname)) {
       document.getElementById('siteName').placeholder = window.location.hostname;
@@ -131,6 +132,16 @@ var my_GAMI_NameSpace = function() {
     sel.appendChild(opt); // add opt to end of select box (sel)
   }
 
+  async function getInfoHandler() {
+    // Disable button while getInfo() is running, then display any resultant error
+    document.getElementById('butn_GI').disabled = true;
+    let giResult = await getInfo();
+    if (giResult !== true) {
+      setElementTextDisplay('giErrorText', giResult, 'block');
+    }
+    document.getElementById('butn_GI').disabled = false;
+  }
+
   async function getInfo() {
     clearPageBelowGetInfo(); //First, clear the display of any content from previous times that GetInfo was used.
 
@@ -139,29 +150,25 @@ var my_GAMI_NameSpace = function() {
     site1.name = removeStartOfString(site1.name, '//');
     site1.name = removeEndOfString(site1.name, '/');
     if (!site1.name) {
-      setElementTextDisplay('giErrorText', 'Please enter a Site Name', 'block');
-      return;
+      return 'Please enter a Site Name';
     }
     if (site1.name === site1.name.split('.')[0]) {
       site1.name = site1.name + '.apemobile.com';
     }
     if (!isApeMobileSite(site1.name)) {
-      setElementTextDisplay('giErrorText', 'Invalid APE Mobile Site Name!', 'block');
-      return;
+      return 'Invalid APE Mobile Site Name!';
     }
 
     // Get the site key:
     site1.apiKey = document.getElementById('siteKey').value.trim();
     if (!site1.apiKey) {
-      setElementTextDisplay('giErrorText', 'Please enter a Site Key', 'block');
-      return;
+      return 'Please enter a Site Key';
     }
 
     // Get the info type:
     let entityType = document.getElementById('infoType').value;
     if (!entityType) {
-      setElementTextDisplay('giErrorText', 'Please select an Info Type', 'block');
-      return;
+      return 'Please select an Info Type';
     }
 
     // Get the list of data in a JSON array:
@@ -187,13 +194,12 @@ var my_GAMI_NameSpace = function() {
           if (selectedProj > 0) {
             entityId = selectedProj;
           } else {
-            setElementTextDisplay('giErrorText', 'Please enter a Project ID', 'block');
             // Not yet complete functionality ~placeholder:
             // For the 3 project children endpoints, add ability to get data from all projects
             // (and make projectID not 'required' in the HTML page).
             // let projectsList = await aGet(site1, apeEntityType.Project, '', {}, { dontRLUserCheck: true });
             // projectsList.forEach(x => console.log(x.name));
-            return;
+            return 'Please enter a Project ID';
           }
           break;
         case apeEntityType.Template:
@@ -236,8 +242,7 @@ var my_GAMI_NameSpace = function() {
       }
       jsonResult = await aGet(site1, entityType, entityId, endpointParams, { dontRLUserCheck: true });
     } catch (error) {
-      setElementTextDisplay('giErrorText', error, 'block');
-      return;
+      return error;
     }
 
     // Display summary info about what was obtained:
@@ -294,6 +299,7 @@ var my_GAMI_NameSpace = function() {
     document.getElementById('fileName').placeholder = defltFilename;
     document.getElementById('fileName').style.display = 'initial';
     document.getElementById('butn_DF').style.display = 'initial';
+    return true;
   }
 
   function downloadAction() {
@@ -308,6 +314,7 @@ var my_GAMI_NameSpace = function() {
       }
       downloadFile(csv, outputFilename, 'text/plain');
     }
+    return true;
   }
 
   function setElementTextDisplay(elementID, text2Display, displayStyle) {
@@ -452,6 +459,16 @@ var my_GAMI_NameSpace = function() {
     // document.body.removeChild(downloadLink);
   }
 
+  async function display_a_PDF_Handler() {
+    // Disable button while display_a_PDF() is running, then display any resultant error
+    document.getElementById('butn_pdf').disabled = true;
+    let dapResult = await display_a_PDF();
+    if (dapResult !== true) {
+      setElementTextDisplay('giErrorText', dapResult, 'block');
+    }
+    document.getElementById('butn_pdf').disabled = false;
+  }
+
   async function display_a_PDF() {
     let formID = -1; //Find the ID for the latest form that has status 1 or 4 (open or closed)
     for (var i = jsonResult.length - 1; i >= 0; i--) {
@@ -461,8 +478,7 @@ var my_GAMI_NameSpace = function() {
       }
     }
     if (formID < 0) {
-      setElementTextDisplay('giErrorText', 'None of those ' + String(jsonResult.length) + ' forms have PDFs!', 'block');
-      return;
+      return 'None of those ' + String(jsonResult.length) + ' forms have PDFs!';
     } else {
       let pdfBlob = await aGet(site1, apeEntityType.Form, formID, '', { outputTo: 'pdf' });
       // Should test whether pdfBlob is ok before proceeding
@@ -471,6 +487,7 @@ var my_GAMI_NameSpace = function() {
       iframe.setAttribute('src', obj_url);
       window.URL.revokeObjectURL(obj_url);
     }
+    return true;
   }
 };
 my_GAMI_NameSpace(); //End of my_GAMI_NameSpace function; now run that.
