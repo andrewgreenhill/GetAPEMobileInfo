@@ -1,8 +1,7 @@
-"Get APE Mobile Info" is a web page for getting & exporting APE Mobile data like:
+"Get APE Mobile Info" is a web page for getting & exporting APE Mobile data including:
 * Users
-* Projects
 * Templates
 * Org Lists
+* Projects
 * Drawings & Documents
-* Project List Types
-* etc
+* Project List Types, and more
