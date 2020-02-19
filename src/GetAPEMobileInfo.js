@@ -173,6 +173,7 @@ var my_GAMI_NameSpace = function() {
 
     // Get the list of data in a JSON array:
     jsonResult = '';
+    let projectsList = false;
     try {
       let entityId = '';
       let endpointParams = {};
@@ -196,10 +197,7 @@ var my_GAMI_NameSpace = function() {
           } else {
             // Not yet complete functionality ~placeholder:
             // For the 3 project children endpoints, add ability to get data from all projects
-            // (and make projectID not 'required' in the HTML page).
-            // let projectsList = await aGet(site1, apeEntityType.Project, '', {}, { dontRLUserCheck: true });
-            // projectsList.forEach(x => console.log(x.name));
-            return 'Please enter a Project ID';
+            projectsList = await aGet(site1, apeEntityType.Project, '', {}, { dontRLUserCheck: true });
           }
           break;
         case apeEntityType.Template:
@@ -240,14 +238,31 @@ var my_GAMI_NameSpace = function() {
         default:
           break;
       }
-      jsonResult = await aGet(site1, entityType, entityId, endpointParams, { dontRLUserCheck: true });
+      if (!projectsList) {
+        jsonResult = await aGet(site1, entityType, entityId, endpointParams, { dontRLUserCheck: true });
+      } else {
+        //Get records from all projects in projectsList using a loop.
+        //I'm using a traditional FOR loop forEach doesn't wait for async/await.
+        jsonResult = [];
+        for (let i = 0; i < projectsList.length; i++) {
+          console.log('project_id: ' + String(projectsList[i].id));
+          jsonResult = jsonResult.concat(await aGet(site1, entityType, projectsList[i].id, endpointParams));
+        }
+        // The forEach loop code that I had tried to get working is below:
+        // projectsList.forEach(async function(x)
+        //   console.log('project_id: ' + String(x.id));
+        //   recordsForAProj = await aGet(site1, entityType, x.id, endpointParams, { dontRLUserCheck: true });
+        //   console.log('recordsForAProj.length = ' + String(recordsForAProj.length));
+        //   jsonResult = jsonResult.concat(recordsForAProj);
+        // });
+      }
     } catch (error) {
       return error;
     }
 
     // Display summary info about what was obtained:
     let infoTypeName = endpointOptions.find(x => x.et === entityType).name;
-    if (jsonResult.length > 1) {
+    if (jsonResult.length !== 1) {
       infoTypeName = infoTypeName + 's';
     }
     setElementTextDisplay('resultSummaryText', `Got ${jsonResult.length} ${infoTypeName}`, 'block');
@@ -256,49 +271,51 @@ var my_GAMI_NameSpace = function() {
       document.getElementById('infoType').value === apeEntityType.Form && jsonResult.length > 0
     );
 
-    // Convert jsonResult to CSV
-    csv = '';
-    let keysToConvert = [];
-    switch (entityType) {
-      case apeEntityType.Template:
-        keysToConvert = [
-          // For templates, use pre-set keys for the template output CSV headings
-          'href',
-          'id',
-          'name',
-          'type',
-          'template_type',
-          'version',
-          'published_version',
-          // 'filename',
-          'active',
-          'created_at',
-          'updated_at',
-          'draft_template_href',
-          'draft_template_id',
-        ];
-        csv = json2csv4templates(jsonResult, keysToConvert);
-        break;
-      case apeEntityType.User:
-        keysToConvert = keysOf1stRecord(jsonResult); // Use the 1st record to determine the column headings
-        csv = json2csv4users(jsonResult, keysToConvert);
-        break;
-      case apeEntityType.Project:
-        keysToConvert = keysOf1stRecord(jsonResult); // Use the 1st record to determine the column headings
-        csv = json2csvKeepingLFCR(jsonResult, keysToConvert); //Keeping LFCR because Description can be multi-line
-        break;
-      default:
-        keysToConvert = keysOf1stRecord(jsonResult); // Use the 1st record to determine the column headings
-        csv = json2csv(jsonResult, keysToConvert);
-        break;
-    }
+    if (jsonResult.length > 1) {
+      // Convert jsonResult to CSV
+      csv = '';
+      let keysToConvert = [];
+      switch (entityType) {
+        case apeEntityType.Template:
+          keysToConvert = [
+            // For templates, use pre-set keys for the template output CSV headings
+            'href',
+            'id',
+            'name',
+            'type',
+            'template_type',
+            'version',
+            'published_version',
+            // 'filename',
+            'active',
+            'created_at',
+            'updated_at',
+            'draft_template_href',
+            'draft_template_id',
+          ];
+          csv = json2csv4templates(jsonResult, keysToConvert);
+          break;
+        case apeEntityType.User:
+          keysToConvert = keysOf1stRecord(jsonResult); // Use the 1st record to determine the column headings
+          csv = json2csv4users(jsonResult, keysToConvert);
+          break;
+        case apeEntityType.Project:
+          keysToConvert = keysOf1stRecord(jsonResult); // Use the 1st record to determine the column headings
+          csv = json2csvKeepingLFCR(jsonResult, keysToConvert); //Keeping LFCR because Description can be multi-line
+          break;
+        default:
+          keysToConvert = keysOf1stRecord(jsonResult); // Use the 1st record to determine the column headings
+          csv = json2csv(jsonResult, keysToConvert);
+          break;
+      }
 
-    // Create a default filename for the output file, and display it to the user:
-    let defltFilename = defaultFilename(site1.name, entityType);
-    document.getElementById('fileName').value = defltFilename;
-    document.getElementById('fileName').placeholder = defltFilename;
-    document.getElementById('fileName').style.display = 'initial';
-    document.getElementById('butn_DF').style.display = 'initial';
+      // Create a default filename for the output file, and display it to the user:
+      let defltFilename = defaultFilename(site1.name, entityType);
+      document.getElementById('fileName').value = defltFilename;
+      document.getElementById('fileName').placeholder = defltFilename;
+      document.getElementById('fileName').style.display = 'initial';
+      document.getElementById('butn_DF').style.display = 'initial';
+    }
     return true;
   }
 
