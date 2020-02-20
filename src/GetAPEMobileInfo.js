@@ -9,7 +9,7 @@ An assistant for getting data from APE Mobile sites, including:
 
 By Andrew Greenhill.
 -----------------------------------------------------------------------------*/
-import { aGet, apeEntityType } from './APE_API_Helper.js';
+import { aGet, apeEntityType, aResponseError } from './APE_API_Helper.js';
 const gami_version = '0.6.6, beta';
 
 var my_GAMI_NameSpace = function() {
@@ -17,7 +17,7 @@ var my_GAMI_NameSpace = function() {
 
   var jsonResult = '';
   var csv = '';
-
+  const specialParams = { dontRLUserCheck: false };
   var site1 = {
     type: 'ape mobile',
     name: '',
@@ -197,7 +197,7 @@ var my_GAMI_NameSpace = function() {
           } else {
             // Not yet complete functionality ~placeholder:
             // For the 3 project children endpoints, add ability to get data from all projects
-            projectsList = await aGet(site1, apeEntityType.Project, '', {}, { dontRLUserCheck: true });
+            projectsList = await aGet(site1, apeEntityType.Project, '', {}, specialParams);
           }
           break;
         case apeEntityType.Template:
@@ -239,25 +239,26 @@ var my_GAMI_NameSpace = function() {
           break;
       }
       if (!projectsList) {
-        jsonResult = await aGet(site1, entityType, entityId, endpointParams, { dontRLUserCheck: true });
+        jsonResult = await aGet(site1, entityType, entityId, endpointParams, specialParams);
       } else {
         //Get records from all projects in projectsList using a loop.
         //I'm using a traditional FOR loop forEach doesn't wait for async/await.
         jsonResult = [];
         for (let i = 0; i < projectsList.length; i++) {
-          console.log('project_id: ' + String(projectsList[i].id));
+          setElementTextDisplay('resultSummaryText', `Getting data from project ${projectsList[i].id}`, 'block');
           jsonResult = jsonResult.concat(await aGet(site1, entityType, projectsList[i].id, endpointParams));
         }
+        setElementTextDisplay('resultSummaryText', '', 'none');
         // The forEach loop code that I had tried to get working is below:
         // projectsList.forEach(async function(x)
         //   console.log('project_id: ' + String(x.id));
-        //   recordsForAProj = await aGet(site1, entityType, x.id, endpointParams, { dontRLUserCheck: true });
+        //   recordsForAProj = await aGet(site1, entityType, x.id, endpointParams, specialParams);
         //   console.log('recordsForAProj.length = ' + String(recordsForAProj.length));
         //   jsonResult = jsonResult.concat(recordsForAProj);
         // });
       }
     } catch (error) {
-      return error;
+      return processError(error);
     }
 
     // Display summary info about what was obtained:
@@ -317,6 +318,21 @@ var my_GAMI_NameSpace = function() {
       document.getElementById('butn_DF').style.display = 'initial';
     }
     return true;
+  }
+
+  function processError(error) {
+    let retVal = error;
+    if (error.name === 'AbortError') {
+      retVal = 'Response timed out';
+    } else {
+      console.error(`'${error.name}'`);
+      if (error instanceof aResponseError) {
+        console.error(error.response.status);
+        retVal = `'${error.message}'`;
+      }
+    }
+    console.error(error.message);
+    return retVal;
   }
 
   function downloadAction() {
