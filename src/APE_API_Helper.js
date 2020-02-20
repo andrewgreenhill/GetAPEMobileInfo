@@ -4,7 +4,7 @@ For usage details see the documentation. */
 
 const aGsVerboseMode = false; //'apemobile'; //Set this to true or to a[n array of] tag[s] to enable verbose console logging from all or select parts
 
-class aResponseError extends Error {
+export class aResponseError extends Error {
   //This helps with handling not-OK responses from fetchWithTimeout
   constructor(response) {
     super(`${response.status} "${response.statusText}" for ${response.url}`);
