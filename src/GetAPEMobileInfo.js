@@ -323,15 +323,21 @@ var my_GAMI_NameSpace = function() {
   function processError(error) {
     let retVal = error;
     if (error.name === 'AbortError') {
-      retVal = 'Response timed out';
+      retVal = `Response from ${site1.name} timed out.`;
     } else {
-      console.error(`'${error.name}'`);
+      // console.error(`'${error.name}'`);
       if (error instanceof aResponseError) {
-        console.error(error.response.status);
-        retVal = `'${error.message}'`;
+        // console.error(error.response.status);
+        if (error.response.status === 404) {
+          retVal = `Error: 404 "Not Found" for ${site1.name}`;
+        } else if (error.response.status === 401) {
+          retVal = `Error: 401 "Unauthorised" from ${site1.name} . Check the Key for the site, and also that the site has "API enabled" setting turned on under Admin => Organisation.`;
+        } else {
+          retVal = `Error: '${error.message}'`;
+        }
       }
     }
-    console.error(error.message);
+    // console.error(error.message);
     return retVal;
   }
 
