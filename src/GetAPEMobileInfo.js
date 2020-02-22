@@ -17,7 +17,7 @@ var my_GAMI_NameSpace = function() {
 
   var jsonResult = '';
   var csv = '';
-  const specialParams = { dontRLUserCheck: false };
+  const specialParams = { dontRLUserCheck: true };
   var site1 = {
     type: 'ape mobile',
     name: '',
@@ -320,16 +320,17 @@ var my_GAMI_NameSpace = function() {
     return true;
   }
 
+  //Create more-meaningful error messages to display to the user
   function processError(error) {
     let retVal = error;
     if (error.name === 'AbortError') {
       retVal = `Response from ${site1.name} timed out.`;
+    } else if (error.name === 'TypeError' && site1.proxy) {
+      retVal = `TypeError: Proxy may be down.`;
     } else {
-      // console.error(`'${error.name}'`);
       if (error instanceof aResponseError) {
-        // console.error(error.response.status);
         if (error.response.status === 404) {
-          retVal = `Error: 404 "Not Found" for ${site1.name}`;
+          retVal = `Error: 404 "Not Found" for ${site1.name}. Is that site Name correct? Could you be trying to access a non-existant record?`;
         } else if (error.response.status === 401) {
           retVal = `Error: 401 "Unauthorised" from ${site1.name} . Check the Key for the site, and also that the site has "API enabled" setting turned on under Admin => Organisation.`;
         } else {
@@ -337,7 +338,6 @@ var my_GAMI_NameSpace = function() {
         }
       }
     }
-    // console.error(error.message);
     return retVal;
   }
 
@@ -454,7 +454,6 @@ var my_GAMI_NameSpace = function() {
             case 'external':
               return 'External';
             default:
-              console.error('Unexpected user_type!');
               return 'Unexpected user_type!';
           }
         })
