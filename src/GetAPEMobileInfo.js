@@ -26,6 +26,7 @@ var my_GAMI_NameSpace = function() {
     defaultTimeout: 20000,
   };
   var specialParams = { dontRLUserCheck: true }; //By default, don't rate-limit user permissions checks
+  var stopped = false; //State changed by use of the stop button
 
   function siteNameChanged() {
     specialParams.dontRLUserCheck = true; //Don't rate-limit user-permission checks following a site change
@@ -85,6 +86,7 @@ var my_GAMI_NameSpace = function() {
   function initialise_web_page() {
     setElementTextDisplay('versionDisplay', 'Version ' + String(gami_version), 'block');
     endpointOptions.forEach(optn => addOptionToSelectList('infoType', optn.text, optn.et));
+    document.getElementById('butn_stop').onclick = stopAction;
     document.getElementById('butn_GI').onclick = getInfoHandler;
     document.getElementById('butn_DF').onclick = downloadAction;
     document.getElementById('butn_pdf').onclick = display_a_PDF_Handler;
@@ -100,6 +102,10 @@ var my_GAMI_NameSpace = function() {
     } else {
       site1.proxy = 'https://cors-anywhere-ag.herokuapp.com/'; //This proxy prevents blocking by browser SOP
     }
+  }
+
+  function stopAction() {
+    stopped = true;
   }
 
   //A simple function to help with turning an element's display on/off:
@@ -119,6 +125,10 @@ var my_GAMI_NameSpace = function() {
     document.getElementById('actionOptions').style.display = blockOrNone(endpoint === apeEntityType.Action);
     document.getElementById('memoOptions').style.display = blockOrNone(endpoint === apeEntityType.Memo);
     document.getElementById('punchListsOptions').style.display = blockOrNone(endpoint === apeEntityType.PunchList);
+
+    if (document.getElementById('pdfViewer').style.display === 'block') {
+      document.getElementById('pdfViewer').style.display = blockOrNone(endpoint === apeEntityType.Form);
+    }
 
     document.getElementById('projChildrenOptions').style.display = blockOrNone(
       endpoint === apeEntityType.ProjMember ||
@@ -253,13 +263,16 @@ var my_GAMI_NameSpace = function() {
         siteRespondedOk();
       } else {
         //Get records from all projects in projectsList using a loop.
-        //I'm using a traditional FOR loop forEach doesn't wait for async/await.
+        //I'm using a traditional FOR loop because forEach doesn't wait for async/await.
+        document.getElementById('butn_stop').style.display = 'block';
         jsonResult = [];
-        for (let i = 0; i < projectsList.length; i++) {
+        for (let i = 0; i < projectsList.length && !stopped; i++) {
           setElementTextDisplay('resultSummaryText', `Getting data from project ${projectsList[i].id}`, 'block');
           jsonResult = jsonResult.concat(await aGet(site1, entityType, projectsList[i].id, endpointParams));
         }
         siteRespondedOk();
+        stopped = false; //Reset this for possible re-use
+        document.getElementById('butn_stop').style.display = 'none';
         setElementTextDisplay('resultSummaryText', '', 'none');
         // The forEach loop code that I had tried to get working is below:
         // projectsList.forEach(async function(x)
