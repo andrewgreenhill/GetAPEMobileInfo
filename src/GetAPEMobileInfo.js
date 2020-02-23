@@ -17,7 +17,6 @@ var my_GAMI_NameSpace = function() {
 
   var jsonResult = '';
   var csv = '';
-  const specialParams = { dontRLUserCheck: true };
   var site1 = {
     type: 'ape mobile',
     name: '',
@@ -26,6 +25,15 @@ var my_GAMI_NameSpace = function() {
     proxy: '',
     defaultTimeout: 20000,
   };
+  var specialParams = { dontRLUserCheck: true }; //By default, don't rate-limit user permissions checks
+
+  function siteRespondedOk() {
+    specialParams.dontRLUserCheck = false; //Rate-limit user permissions checks once the site has responded Ok
+  }
+
+  function siteNameChanged() {
+    specialParams.dontRLUserCheck = true; //Don't rate-limit user permissions checks following a site change
+  }
 
   //Info types offered to the user, plus names for reporting & filenaming, and EntityType for using it with API helper
   let endpointOptions = [];
@@ -80,6 +88,7 @@ var my_GAMI_NameSpace = function() {
     document.getElementById('butn_GI').onclick = getInfoHandler;
     document.getElementById('butn_DF').onclick = downloadAction;
     document.getElementById('butn_pdf').onclick = display_a_PDF_Handler;
+    document.getElementById('siteName').addEventListener('change', siteNameChanged);
     document.getElementById('infoType').addEventListener('change', displayEndpointParams);
     if (window.location.hostname === 'pegasus') {
       document.getElementById('siteName').placeholder = 'apesandbox';
@@ -198,6 +207,7 @@ var my_GAMI_NameSpace = function() {
             // Not yet complete functionality ~placeholder:
             // For the 3 project children endpoints, add ability to get data from all projects
             projectsList = await aGet(site1, apeEntityType.Project, '', {}, specialParams);
+            siteRespondedOk();
           }
           break;
         case apeEntityType.Template:
@@ -240,6 +250,7 @@ var my_GAMI_NameSpace = function() {
       }
       if (!projectsList) {
         jsonResult = await aGet(site1, entityType, entityId, endpointParams, specialParams);
+        siteRespondedOk();
       } else {
         //Get records from all projects in projectsList using a loop.
         //I'm using a traditional FOR loop forEach doesn't wait for async/await.
@@ -248,6 +259,7 @@ var my_GAMI_NameSpace = function() {
           setElementTextDisplay('resultSummaryText', `Getting data from project ${projectsList[i].id}`, 'block');
           jsonResult = jsonResult.concat(await aGet(site1, entityType, projectsList[i].id, endpointParams));
         }
+        siteRespondedOk();
         setElementTextDisplay('resultSummaryText', '', 'none');
         // The forEach loop code that I had tried to get working is below:
         // projectsList.forEach(async function(x)
@@ -256,6 +268,7 @@ var my_GAMI_NameSpace = function() {
         //   console.log('recordsForAProj.length = ' + String(recordsForAProj.length));
         //   jsonResult = jsonResult.concat(recordsForAProj);
         // });
+        // siteRespondedOk();
       }
     } catch (error) {
       return processError(error);
@@ -519,6 +532,7 @@ var my_GAMI_NameSpace = function() {
       return 'None of those ' + String(jsonResult.length) + ' forms have PDFs!';
     } else {
       let pdfBlob = await aGet(site1, apeEntityType.Form, formID, '', { outputTo: 'pdf' });
+      siteRespondedOk();
       // Should test whether pdfBlob is ok before proceeding
       const obj_url = window.URL.createObjectURL(pdfBlob);
       const iframe = document.getElementById('viewer');
