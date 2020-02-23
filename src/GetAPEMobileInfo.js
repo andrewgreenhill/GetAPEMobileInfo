@@ -17,7 +17,6 @@ var my_GAMI_NameSpace = function() {
 
   var jsonResult = '';
   var csv = '';
-  const specialParams = { dontRLUserCheck: true };
   var site1 = {
     type: 'ape mobile',
     name: '',
@@ -26,6 +25,16 @@ var my_GAMI_NameSpace = function() {
     proxy: '',
     defaultTimeout: 20000,
   };
+  var specialParams = { dontRLUserCheck: true }; //By default, don't rate-limit user permissions checks
+  var stopped = false; //State changed by use of the stop button
+
+  function siteNameChanged() {
+    specialParams.dontRLUserCheck = true; //Don't rate-limit user-permission checks following a site change
+  }
+
+  function siteRespondedOk() {
+    specialParams.dontRLUserCheck = false; //Rate-limit user-permission checks after the site has responded Ok
+  }
 
   //Info types offered to the user, plus names for reporting & filenaming, and EntityType for using it with API helper
   let endpointOptions = [];
@@ -77,9 +86,11 @@ var my_GAMI_NameSpace = function() {
   function initialise_web_page() {
     setElementTextDisplay('versionDisplay', 'Version ' + String(gami_version), 'block');
     endpointOptions.forEach(optn => addOptionToSelectList('infoType', optn.text, optn.et));
+    document.getElementById('butn_stop').onclick = stopAction;
     document.getElementById('butn_GI').onclick = getInfoHandler;
     document.getElementById('butn_DF').onclick = downloadAction;
     document.getElementById('butn_pdf').onclick = display_a_PDF_Handler;
+    document.getElementById('siteName').addEventListener('change', siteNameChanged);
     document.getElementById('infoType').addEventListener('change', displayEndpointParams);
     if (window.location.hostname === 'pegasus') {
       document.getElementById('siteName').placeholder = 'apesandbox';
@@ -91,6 +102,10 @@ var my_GAMI_NameSpace = function() {
     } else {
       site1.proxy = 'https://cors-anywhere-ag.herokuapp.com/'; //This proxy prevents blocking by browser SOP
     }
+  }
+
+  function stopAction() {
+    stopped = true;
   }
 
   //A simple function to help with turning an element's display on/off:
@@ -110,6 +125,10 @@ var my_GAMI_NameSpace = function() {
     document.getElementById('actionOptions').style.display = blockOrNone(endpoint === apeEntityType.Action);
     document.getElementById('memoOptions').style.display = blockOrNone(endpoint === apeEntityType.Memo);
     document.getElementById('punchListsOptions').style.display = blockOrNone(endpoint === apeEntityType.PunchList);
+
+    if (document.getElementById('pdfViewer').style.display === 'block') {
+      document.getElementById('pdfViewer').style.display = blockOrNone(endpoint === apeEntityType.Form);
+    }
 
     document.getElementById('projChildrenOptions').style.display = blockOrNone(
       endpoint === apeEntityType.ProjMember ||
@@ -198,6 +217,7 @@ var my_GAMI_NameSpace = function() {
             // Not yet complete functionality ~placeholder:
             // For the 3 project children endpoints, add ability to get data from all projects
             projectsList = await aGet(site1, apeEntityType.Project, '', {}, specialParams);
+            siteRespondedOk();
           }
           break;
         case apeEntityType.Template:
@@ -240,14 +260,19 @@ var my_GAMI_NameSpace = function() {
       }
       if (!projectsList) {
         jsonResult = await aGet(site1, entityType, entityId, endpointParams, specialParams);
+        siteRespondedOk();
       } else {
         //Get records from all projects in projectsList using a loop.
-        //I'm using a traditional FOR loop forEach doesn't wait for async/await.
+        //I'm using a traditional FOR loop because forEach doesn't wait for async/await.
+        document.getElementById('butn_stop').style.display = 'block';
         jsonResult = [];
-        for (let i = 0; i < projectsList.length; i++) {
+        for (let i = 0; i < projectsList.length && !stopped; i++) {
           setElementTextDisplay('resultSummaryText', `Getting data from project ${projectsList[i].id}`, 'block');
           jsonResult = jsonResult.concat(await aGet(site1, entityType, projectsList[i].id, endpointParams));
         }
+        siteRespondedOk();
+        stopped = false; //Reset this for possible re-use
+        document.getElementById('butn_stop').style.display = 'none';
         setElementTextDisplay('resultSummaryText', '', 'none');
         // The forEach loop code that I had tried to get working is below:
         // projectsList.forEach(async function(x)
@@ -256,6 +281,7 @@ var my_GAMI_NameSpace = function() {
         //   console.log('recordsForAProj.length = ' + String(recordsForAProj.length));
         //   jsonResult = jsonResult.concat(recordsForAProj);
         // });
+        // siteRespondedOk();
       }
     } catch (error) {
       return processError(error);
@@ -518,12 +544,21 @@ var my_GAMI_NameSpace = function() {
     if (formID < 0) {
       return 'None of those ' + String(jsonResult.length) + ' forms have PDFs!';
     } else {
-      let pdfBlob = await aGet(site1, apeEntityType.Form, formID, '', { outputTo: 'pdf' });
-      // Should test whether pdfBlob is ok before proceeding
-      const obj_url = window.URL.createObjectURL(pdfBlob);
-      const iframe = document.getElementById('viewer');
-      iframe.setAttribute('src', obj_url);
-      window.URL.revokeObjectURL(obj_url);
+      try {
+        let pdfBlob = await aGet(site1, apeEntityType.Form, formID, '', { outputTo: 'pdf' });
+        siteRespondedOk();
+        // Should test whether pdfBlob is ok before proceeding
+        const obj_url = window.URL.createObjectURL(pdfBlob);
+        const iframe = document.getElementById('viewer');
+        iframe.setAttribute('src', obj_url);
+        window.URL.revokeObjectURL(obj_url);
+      } catch (error) {
+        if (error.response.status === 404) {
+          return `Error: 404 "Not Found" occurred when trying to get a PDF for form ${formID}. That form appears to not have a PDF, its template might not have a DOCX file.`;
+        } else {
+          return processError(error);
+        }
+      }
     }
     return true;
   }
