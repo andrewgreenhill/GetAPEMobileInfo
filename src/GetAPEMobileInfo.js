@@ -27,12 +27,12 @@ var my_GAMI_NameSpace = function() {
   };
   var specialParams = { dontRLUserCheck: true }; //By default, don't rate-limit user permissions checks
 
-  function siteRespondedOk() {
-    specialParams.dontRLUserCheck = false; //Rate-limit user permissions checks once the site has responded Ok
+  function siteNameChanged() {
+    specialParams.dontRLUserCheck = true; //Don't rate-limit user-permission checks following a site change
   }
 
-  function siteNameChanged() {
-    specialParams.dontRLUserCheck = true; //Don't rate-limit user permissions checks following a site change
+  function siteRespondedOk() {
+    specialParams.dontRLUserCheck = false; //Rate-limit user-permission checks after the site has responded Ok
   }
 
   //Info types offered to the user, plus names for reporting & filenaming, and EntityType for using it with API helper
@@ -531,13 +531,21 @@ var my_GAMI_NameSpace = function() {
     if (formID < 0) {
       return 'None of those ' + String(jsonResult.length) + ' forms have PDFs!';
     } else {
-      let pdfBlob = await aGet(site1, apeEntityType.Form, formID, '', { outputTo: 'pdf' });
-      siteRespondedOk();
-      // Should test whether pdfBlob is ok before proceeding
-      const obj_url = window.URL.createObjectURL(pdfBlob);
-      const iframe = document.getElementById('viewer');
-      iframe.setAttribute('src', obj_url);
-      window.URL.revokeObjectURL(obj_url);
+      try {
+        let pdfBlob = await aGet(site1, apeEntityType.Form, formID, '', { outputTo: 'pdf' });
+        siteRespondedOk();
+        // Should test whether pdfBlob is ok before proceeding
+        const obj_url = window.URL.createObjectURL(pdfBlob);
+        const iframe = document.getElementById('viewer');
+        iframe.setAttribute('src', obj_url);
+        window.URL.revokeObjectURL(obj_url);
+      } catch (error) {
+        if (error.response.status === 404) {
+          return `Error: 404 "Not Found" occurred when trying to get a PDF for form ${formID}. That form appears to not have a PDF, its template might not have a DOCX file.`;
+        } else {
+          return processError(error);
+        }
+      }
     }
     return true;
   }

@@ -546,7 +546,7 @@ export async function aGet(
           if (numRecordsInLastChunk < chunkSize) {
             finishNow = true;
           } //If we got less records then that must be all of them.
-          chunkFrom = retVal[numRecordsInLastChunk - 1].id;
+          chunkFrom = numRecordsInLastChunk >= 1 ? retVal[numRecordsInLastChunk - 1].id : 0;
           recordsObtained = recordsObtained.concat(retVal);
           numRecordsCumulative = recordsObtained.length;
           verboseConLog(
