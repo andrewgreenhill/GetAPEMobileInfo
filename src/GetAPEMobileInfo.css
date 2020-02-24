@@ -119,6 +119,11 @@ h1 {
     font-weight: normal;
 }
 
+.titleText {
+    display: inline-block;
+    margin-bottom: 0;
+}
+
 #versionDisplay {
     margin-left: 0%;
     margin-top: 10px;
@@ -132,6 +137,78 @@ main {
 
 .hidden {
     display: none;
+}
+
+.label81 {
+    float: left;
+    clear: left;
+    width: 81px;
+    padding-right: .5em;
+}
+.field81 {
+    width: 250px;
+}
+.field81list {
+    width: 254px;
+}
+
+.label105 {
+    float: left;
+    clear: left;
+    width: 105px;
+    padding-right: .5em;
+}
+.field105list {
+    width: 229px;
+}
+.field105 {
+    width: 225px;
+}
+
+.label110 {
+    float: left;
+    clear: left;
+    width: 110px;
+    padding-right: .5em;
+}
+.field110 {
+    width: 224px;
+}
+
+.label122 {
+    float: left;
+    clear: left;
+    width: 122px;
+    padding-right: .5em;
+}
+.field122 {
+    width: 212px;
+}
+.label122check {
+    float: left;
+    clear: left;
+    width: 118px;
+    padding-right: .5em;
+}
+
+.label140 {
+    float: left;
+    clear: left;
+    width: 140px;
+    padding-right: .5em;
+}
+.field140 {
+    width: 190px;
+}
+
+.label150 {
+    float: left;
+    clear: left;
+    width: 150px;
+    padding-right: .5em;
+}
+.field150 {
+    width: 180px;
 }
 
 #giErrorText {
@@ -156,4 +233,10 @@ main {
     font-weight: bold;
     margin-top: 2px;
     margin-bottom: 10px;
+}
+
+.viewerStyle {
+    width: 95%;
+    height: 1200px;
+    margin-top: 8px;
 }
