@@ -10,7 +10,7 @@ An assistant for getting data from APE Mobile sites, including:
 By Andrew Greenhill.
 -----------------------------------------------------------------------------*/
 import { aGet, apeEntityType, aResponseError } from './APE_API_Helper.js';
-const gami_version = '0.6.6, beta';
+const gami_version = '0.6.7, beta';
 
 var my_GAMI_NameSpace = function() {
   //A function wrapper simply to create my own 'Get APE Mobile Info' name space
