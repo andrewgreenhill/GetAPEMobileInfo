@@ -331,9 +331,9 @@ export async function aGet(
   specialParamsA = {},
   fetchParamsA = {}
 ) {
-  let entityParams = cloneObject(entityParamsA); //Making copies of the object Arguments to avoid creating side effects
-  let specialParams = cloneObject(specialParamsA);
-  let fetchParams = cloneObject(fetchParamsA);
+  let entityParams = entityParamsA === 0 ? {} : cloneObject(entityParamsA); //Making copies of the object Arguments to avoid creating side effects
+  let specialParams = specialParamsA === 0 ? {} : cloneObject(specialParamsA);
+  let fetchParams = fetchParamsA === 0 ? {} : cloneObject(fetchParamsA);
   if (!(await checkPermissions(site, entityType, entityId, specialParams))) {
     verboseConLog(`Don't have permission for '${entityType}' '${entityId}' on ${site.name}`);
     throw new Error(`Don't have permission for '${entityType}' '${entityId}' on ${site.name}`);
