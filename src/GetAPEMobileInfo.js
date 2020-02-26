@@ -313,7 +313,7 @@ var my_GAMI_NameSpace = function() {
             'template_type',
             'version',
             'published_version',
-            // 'filename',
+            'template_file_name',
             'active',
             'created_at',
             'updated_at',
