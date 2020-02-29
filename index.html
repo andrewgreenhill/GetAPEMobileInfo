@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="src/OpenSans.css">
     <link rel="stylesheet" type="text/css" href="src/GetAPEMobileInfo.css">
     <script src="src/GetAPEMobileInfo.js" type="module" async></script>
@@ -81,20 +82,20 @@
 
             <div id='projChildrenOptions' class='optionsBox'>
                 <p class="optionsSubtitle">Project Members/Lists/WBS Options</p>
-                <label for="selectedProj" class="label150">Project ID (optional)</label>
-                <input id="selectedProj" name="selectedProj" type="number" class="field150" min="1"/>
+                <label for="selectedProj" class="label160">Project ID (optional)</label>
+                <input id="selectedProj" name="selectedProj" type="number" class="field160" min="1"/>
             </div>
 
             <div id='drawingOptions' class='optionsBox'>
                 <p class="optionsSubtitle">Drawings & Docs Options</p>
-                <label for="drawingProj" class="label150">Project ID (optional)</label>
-                <input id="drawingProj" name="drawingProj" type="number" class="field150" min="1"/>
+                <label for="drawingProj" class="label160">Project ID (optional)</label>
+                <input id="drawingProj" name="drawingProj" type="number" class="field160" min="1"/>
             </div>
 
             <div id='templateOptions' class='optionsBox'>
                 <p class="optionsSubtitle">Templates Options</p>
-                <label for="templateType1" class="label122">Template type</label>
-                <select name="templateType1" id="templateType1" class="field122" required>
+                <label for="templateType1" class="label132">Template type</label>
+                <select name="templateType1" id="templateType1" class="field132" required>
                     <option value="All">All</option>
                     <option value="5">Form</option>
                     <option value="4">Action</option>
@@ -103,15 +104,15 @@
                     <option value="3">Memo: RFI</option>
                 </select>
                 <p></p>
-                <label for="templateType2" class="label122">Draft/Published</label>
-                <select name="templateType2" id="templateType2" class="field122" required>
+                <label for="templateType2" class="label132">Draft/Published</label>
+                <select name="templateType2" id="templateType2" class="field132" required>
                     <option value="draft">Draft (recommended)</option>
                     <option value="published">Published</option>
                     <option value="archived">Archived</option>
                     <option value="draft|archived|published">All</option>
                 </select>
                 <p></p>  
-                <label for="include_inactive" class="label122check">Include inactive</label>          
+                <label for="include_inactive" class="label132check">Include inactive</label>          
                 <input type="checkbox" name="include_inactive" id="include_inactive" value=true>
                 <br>
             </div>

@@ -175,19 +175,19 @@ main {
     width: 224px;
 }
 
-.label122 {
+.label132 {
     float: left;
     clear: left;
-    width: 122px;
+    width: 132px;
     padding-right: .5em;
 }
-.field122 {
-    width: 212px;
+.field132 {
+    width: 202px;
 }
-.label122check {
+.label132check {
     float: left;
     clear: left;
-    width: 118px;
+    width: 128px;
     padding-right: .5em;
 }
 
@@ -201,14 +201,14 @@ main {
     width: 190px;
 }
 
-.label150 {
+.label160 {
     float: left;
     clear: left;
-    width: 150px;
+    width: 160px;
     padding-right: .5em;
 }
-.field150 {
-    width: 180px;
+.field160 {
+    width: 170px;
 }
 
 #giErrorText {
