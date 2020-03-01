@@ -1,4 +1,4 @@
-@font-face {
+/* @font-face {
     font-family: "Open Sans";
     src: url(../res/OpenSans-Regular.ttf);
     font-weight: normal;
@@ -13,9 +13,11 @@
     src: url(../res/OpenSans-Italic.ttf);
     font-weight: normal;
     font-style: italic;
-}
+} */
+
+/* I switched from using the fonts above to ones from https://fonts.google.com/specimen/Open+Sans */
 
 body {
     font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    /* font-size: 1.3em; */
+    font-size: 1.05em;
 }
