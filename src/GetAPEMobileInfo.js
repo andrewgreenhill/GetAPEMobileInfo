@@ -151,6 +151,15 @@ var my_GAMI_NameSpace = function() {
     sel.appendChild(opt); // add opt to end of select box (sel)
   }
 
+  function insert_elementB_into_array_after_elementA(elemntB, arry, elemntA) {
+    // Example: insert_elementB_into_array_after_elementA('e', ['q','w','r','t'], 'w') => ['q','w','e','r','t']
+    let position = arry.indexOf(elemntA) + 1;
+    if (position > 0) {
+      return arry.slice(0, position).concat(elemntB, arry.slice(position));
+    }
+    return arry;
+  }
+
   async function getInfoHandler() {
     // Disable button while getInfo() is running, then display any resultant error
     document.getElementById('butn_GI').disabled = true;
@@ -329,6 +338,16 @@ var my_GAMI_NameSpace = function() {
         case apeEntityType.Project:
           keysToConvert = keysOf1stRecord(jsonResult); // Use the 1st record to determine the column headings
           csv = json2csvKeepingLFCR(jsonResult, keysToConvert); //Keeping LFCR because Description can be multi-line
+          break;
+        case apeEntityType.ProjMember:
+          keysToConvert = keysOf1stRecord(jsonResult); // Use the 1st record to determine the column headings
+          keysToConvert = insert_elementB_into_array_after_elementA(
+            'permission_desc',
+            keysToConvert,
+            'permission_level'
+          );
+          console.log(keysToConvert);
+          csv = json2csv(jsonResult, keysToConvert);
           break;
         default:
           keysToConvert = keysOf1stRecord(jsonResult); // Use the 1st record to determine the column headings
