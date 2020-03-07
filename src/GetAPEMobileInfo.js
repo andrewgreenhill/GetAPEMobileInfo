@@ -346,8 +346,7 @@ var my_GAMI_NameSpace = function() {
             keysToConvert,
             'permission_level'
           );
-          console.log(keysToConvert);
-          csv = json2csv(jsonResult, keysToConvert);
+          csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperForProjectMembers);
           break;
         default:
           keysToConvert = keysOf1stRecord(jsonResult); // Use the 1st record to determine the column headings
@@ -452,8 +451,9 @@ var my_GAMI_NameSpace = function() {
     return Object.keys(jsonArray[0]);
   }
 
+  const replacer = (key, value) => (value === null ? '' : value); //Used in json2csv and fieldMapper functions
+
   function json2csv(jsonArray, columnHeadings) {
-    const replacer = (key, value) => (value === null ? '' : value);
     let csvArray = jsonArray.map(row =>
       columnHeadings
         .map(fieldName => (row[fieldName] === undefined ? '' : JSON.stringify(row[fieldName], replacer)))
@@ -465,7 +465,6 @@ var my_GAMI_NameSpace = function() {
 
   function json2csvKeepingLFCR(jsonArray, columnHeadings) {
     //A variant of json2csv that keeps LineFeed CarriageReturn pairs (and CR) instead of turning them into \r\n (or \n)
-    const replacer = (key, value) => (value === null ? '' : value);
     let csvArray = jsonArray.map(row =>
       columnHeadings
         .map(
@@ -484,7 +483,6 @@ var my_GAMI_NameSpace = function() {
 
   function json2csv4users(jsonArray, columnHeadings) {
     //A variant of json2csv for Users data that re-maps the user_type descriptions to newer terminology
-    const replacer = (key, value) => (value === null ? '' : value);
     let csvArray = jsonArray.map(row =>
       columnHeadings
         .map(function(fieldName) {
@@ -508,9 +506,25 @@ var my_GAMI_NameSpace = function() {
     return csvArray.join('\r\n'); //Return the array as a string.
   }
 
+  function fieldMapperForProjectMembers(fieldname, row) {
+    const permission_descs = ['Read only', 'Create records', '#2', 'Send records', 'Edit project'];
+    switch (fieldname) {
+      case 'permission_desc':
+        return row.permission_level === undefined ? '' : permission_descs[row.permission_level];
+      default:
+        return row[fieldname] === undefined ? '' : JSON.stringify(row[fieldname], replacer);
+    }
+  }
+
+  function json2csvWithfieldMapper(jsonArray, columnHeadings, fieldMapper) {
+    //A variant of json2csv that takes a function for modifying the field output mapping
+    let csvArray = jsonArray.map(row => columnHeadings.map(fieldName => fieldMapper(fieldName, row)).join(','));
+    csvArray.unshift(columnHeadings.join(','));
+    return csvArray.join('\r\n');
+  }
+
   function json2csv4templates(jsonArray, columnHeadings) {
     //A variant of json2csv that handles draft template details (because they're inside an object)
-    const replacer = (key, value) => (value === null ? '' : value);
     const template_types = ['General Memo', 'Issue Memo', 'RFI Memo', 'Action', 'Form'];
     let csvArray = jsonArray.map(row =>
       columnHeadings
