@@ -151,6 +151,15 @@ var my_GAMI_NameSpace = function() {
     sel.appendChild(opt); // add opt to end of select box (sel)
   }
 
+  function insert_elementB_into_array_after_elementA(elemntB, arry, elemntA) {
+    // Example: insert_elementB_into_array_after_elementA('e', ['q','w','r','t'], 'w') => ['q','w','e','r','t']
+    let position = arry.indexOf(elemntA) + 1;
+    if (position > 0) {
+      return arry.slice(0, position).concat(elemntB, arry.slice(position));
+    }
+    return arry;
+  }
+
   async function getInfoHandler() {
     // Disable button while getInfo() is running, then display any resultant error
     document.getElementById('butn_GI').disabled = true;
@@ -320,19 +329,29 @@ var my_GAMI_NameSpace = function() {
             'draft_template_href',
             'draft_template_id',
           ];
-          csv = json2csv4templates(jsonResult, keysToConvert);
+          csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperForTemplates);
           break;
         case apeEntityType.User:
           keysToConvert = keysOf1stRecord(jsonResult); // Use the 1st record to determine the column headings
-          csv = json2csv4users(jsonResult, keysToConvert);
+          csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperForUsers);
           break;
         case apeEntityType.Project:
           keysToConvert = keysOf1stRecord(jsonResult); // Use the 1st record to determine the column headings
-          csv = json2csvKeepingLFCR(jsonResult, keysToConvert); //Keeping LFCR because Description can be multi-line
+          //Keep LFCR because project Description can be multi-line:
+          csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperThatKeepsLFCR);
+          break;
+        case apeEntityType.ProjMember:
+          keysToConvert = keysOf1stRecord(jsonResult); // Use the 1st record to determine the column headings
+          keysToConvert = insert_elementB_into_array_after_elementA(
+            'permission_desc', //insert permission_desc after permission_level
+            keysToConvert,
+            'permission_level'
+          );
+          csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperForProjectMembers);
           break;
         default:
           keysToConvert = keysOf1stRecord(jsonResult); // Use the 1st record to determine the column headings
-          csv = json2csv(jsonResult, keysToConvert);
+          csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperSimple);
           break;
       }
 
@@ -433,84 +452,67 @@ var my_GAMI_NameSpace = function() {
     return Object.keys(jsonArray[0]);
   }
 
-  function json2csv(jsonArray, columnHeadings) {
-    const replacer = (key, value) => (value === null ? '' : value);
-    let csvArray = jsonArray.map(row =>
-      columnHeadings
-        .map(fieldName => (row[fieldName] === undefined ? '' : JSON.stringify(row[fieldName], replacer)))
-        .join(',')
-    );
+  function json2csvWithfieldMapper(jsonArray, columnHeadings, fieldMapper) {
+    // Convert a JSON array to CSV, using a fieldMapper fn to affect the output
+    let csvArray = jsonArray.map(row => columnHeadings.map(fieldName => fieldMapper(fieldName, row)).join(','));
     csvArray.unshift(columnHeadings.join(','));
     return csvArray.join('\r\n');
   }
 
-  function json2csvKeepingLFCR(jsonArray, columnHeadings) {
-    //A variant of json2csv that keeps LineFeed CarriageReturn pairs (and CR) instead of turning them into \r\n (or \n)
-    const replacer = (key, value) => (value === null ? '' : value);
-    let csvArray = jsonArray.map(row =>
-      columnHeadings
-        .map(
-          fieldName =>
-            row[fieldName] === undefined
-              ? ''
-              : JSON.stringify(row[fieldName], replacer)
-                  .replace(/\\r\\n/gm, '\r\n') //Replace LF+CR pair
-                  .replace(/\\n/gm, '\n') //Replace CR
-        )
-        .join(',')
-    );
-    csvArray.unshift(columnHeadings.join(','));
-    return csvArray.join('\r\n');
+  const replacer = (key, value) => (value === null ? '' : value); //Used in fieldMapper functions
+
+  function fieldMapperSimple(fieldname, row) {
+    return row[fieldname] === undefined ? '' : JSON.stringify(row[fieldname], replacer);
   }
 
-  function json2csv4users(jsonArray, columnHeadings) {
-    //A variant of json2csv for Users data that re-maps the user_type descriptions to newer terminology
-    const replacer = (key, value) => (value === null ? '' : value);
-    let csvArray = jsonArray.map(row =>
-      columnHeadings
-        .map(function(fieldName) {
-          if (fieldName !== 'user_type') {
-            return row[fieldName] === undefined ? '' : JSON.stringify(row[fieldName], replacer);
-          }
-          switch (row.user_type) {
-            case 'standard':
-              return 'Super';
-            case 'operator':
-              return 'Standard';
-            case 'external':
-              return 'External';
-            default:
-              return 'Unexpected user_type!';
-          }
-        })
-        .join(',')
-    );
-    csvArray.unshift(columnHeadings.join(',')); //Add the columnHeadings at the start
-    return csvArray.join('\r\n'); //Return the array as a string.
+  function fieldMapperThatKeepsLFCR(fieldname, row) {
+    // Keep LineFeed CarriageReturn pairs (and CR) instead of turning them into \r\n (or \n)
+    return row[fieldname] === undefined
+      ? ''
+      : JSON.stringify(row[fieldname], replacer)
+          .replace(/\\r\\n/gm, '\r\n') //Replace LF+CR pair
+          .replace(/\\n/gm, '\n'); //Replace CR
   }
 
-  function json2csv4templates(jsonArray, columnHeadings) {
-    //A variant of json2csv that handles draft template details (because they're inside an object)
-    const replacer = (key, value) => (value === null ? '' : value);
-    const template_types = ['General Memo', 'Issue Memo', 'RFI Memo', 'Action', 'Form'];
-    let csvArray = jsonArray.map(row =>
-      columnHeadings
-        .map(function(fieldName) {
-          switch (fieldName) {
-            case 'draft_template_href':
-              return row.draft_template === undefined ? '' : JSON.stringify(row.draft_template.href, replacer);
-            case 'draft_template_id':
-              return row.draft_template === undefined ? '' : JSON.stringify(row.draft_template.id, replacer);
-            case 'template_type':
-              return row.template_type === undefined ? '' : template_types[row.template_type - 1]; //numbers => words
-            default:
-              return row[fieldName] === undefined ? '' : JSON.stringify(row[fieldName], replacer);
-          }
-        })
-        .join(',')
-    );
-    csvArray.unshift(columnHeadings.join(',')); //Add the columnHeadings at the start
-    return csvArray.join('\r\n'); //Return the array as a string.
+  function fieldMapperForUsers(fieldname, row) {
+    if (fieldname !== 'user_type') {
+      return row[fieldname] === undefined ? '' : JSON.stringify(row[fieldname], replacer);
+    }
+    //Re-map the user_type descriptions to newer terminology:
+    switch (row.user_type) {
+      case 'standard':
+        return 'Super';
+      case 'operator':
+        return 'Standard';
+      case 'external':
+        return 'External';
+      default:
+        return 'Unexpected user_type!';
+    }
+  }
+
+  function fieldMapperForProjectMembers(fieldname, row) {
+    if (fieldname !== 'permission_desc') {
+      return row[fieldname] === undefined ? '' : JSON.stringify(row[fieldname], replacer);
+    }
+    //Create a permission description from the permission_level:
+    const permission_descs = ['Read only', 'Create records', '#2', 'Send records', 'Edit project'];
+    return row.permission_level === undefined ? '' : permission_descs[row.permission_level];
+  }
+
+  function fieldMapperForTemplates(fieldname, row) {
+    // Handle draft_template details differently because they're inside an object
+    switch (fieldname) {
+      case 'draft_template_href':
+        return row.draft_template === undefined ? '' : JSON.stringify(row.draft_template.href, replacer);
+      case 'draft_template_id':
+        return row.draft_template === undefined ? '' : JSON.stringify(row.draft_template.id, replacer);
+      case 'template_type':
+        const template_types = ['General Memo', 'Issue Memo', 'RFI Memo', 'Action', 'Form'];
+        return row.template_type === undefined ? '' : template_types[row.template_type - 1]; //Convert type number to words
+      default:
+        return row[fieldname] === undefined ? '' : JSON.stringify(row[fieldname], replacer);
+    }
   }
 
   function downloadFile(content, fileName, contentType) {
