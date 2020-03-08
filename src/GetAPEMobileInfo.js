@@ -10,7 +10,7 @@ An assistant for getting data from APE Mobile sites, including:
 By Andrew Greenhill.
 -----------------------------------------------------------------------------*/
 import { aGet, apeEntityType, aResponseError } from './APE_API_Helper.js';
-const gami_version = '0.6.7, beta';
+const gami_version = '0.6.8, beta';
 
 var my_GAMI_NameSpace = function() {
   //A function wrapper simply to create my own 'Get APE Mobile Info' name space
@@ -126,8 +126,11 @@ var my_GAMI_NameSpace = function() {
     document.getElementById('memoOptions').style.display = blockOrNone(endpoint === apeEntityType.Memo);
     document.getElementById('punchListsOptions').style.display = blockOrNone(endpoint === apeEntityType.PunchList);
 
-    if (document.getElementById('pdfViewer').style.display === 'block') {
+    if (document.getElementById('pdfViewer').style.display === 'block' || document.getElementById('viewer').src) {
       document.getElementById('pdfViewer').style.display = blockOrNone(endpoint === apeEntityType.Form);
+      document.getElementById('viewer').style.display = blockOrNone(
+        endpoint === apeEntityType.Form && document.getElementById('viewer').src
+      );
     }
 
     document.getElementById('projChildrenOptions').style.display = blockOrNone(
@@ -225,6 +228,7 @@ var my_GAMI_NameSpace = function() {
           } else {
             // Not yet complete functionality ~placeholder:
             // For the 3 project children endpoints, add ability to get data from all projects
+            setElementTextDisplay('resultSummaryText', `Getting projects...`, 'block');
             projectsList = await aGet(site1, apeEntityType.Project, '', {}, specialParams);
             siteRespondedOk();
           }
@@ -336,12 +340,12 @@ var my_GAMI_NameSpace = function() {
           csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperForUsers);
           break;
         case apeEntityType.Project:
-          keysToConvert = keysOf1stRecord(jsonResult); // Use the 1st record to determine the column headings
+          keysToConvert = keysOf1stRecord(jsonResult);
           //Keep LFCR because project Description can be multi-line:
           csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperThatKeepsLFCR);
           break;
         case apeEntityType.ProjMember:
-          keysToConvert = keysOf1stRecord(jsonResult); // Use the 1st record to determine the column headings
+          keysToConvert = keysOf1stRecord(jsonResult);
           keysToConvert = insert_elementB_into_array_after_elementA(
             'permission_desc', //insert permission_desc after permission_level
             keysToConvert,
@@ -349,8 +353,45 @@ var my_GAMI_NameSpace = function() {
           );
           csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperForProjectMembers);
           break;
+        case apeEntityType.Form:
+        case apeEntityType.Memo:
+          keysToConvert = keysOf1stRecord(jsonResult);
+          keysToConvert = insert_elementB_into_array_after_elementA(
+            'status_desc', //insert status_desc after status
+            keysToConvert,
+            'status'
+          );
+          csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperForFormsMemos);
+          break;
+        case apeEntityType.Action:
+          keysToConvert = keysOf1stRecord(jsonResult);
+          keysToConvert = insert_elementB_into_array_after_elementA(
+            'status_desc', //insert status_desc after status
+            keysToConvert,
+            'status'
+          );
+          csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperForActions);
+          break;
+        case apeEntityType.PunchList:
+          keysToConvert = keysOf1stRecord(jsonResult);
+          keysToConvert = insert_elementB_into_array_after_elementA(
+            'status_desc', //insert status_desc after status
+            keysToConvert,
+            'status'
+          );
+          csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperForPLs);
+          break;
+        case apeEntityType.DrawingView:
+          keysToConvert = keysOf1stRecord(jsonResult);
+          keysToConvert = insert_elementB_into_array_after_elementA(
+            'event_type_desc', //insert event_type_desc after event_type
+            keysToConvert,
+            'event_type'
+          );
+          csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperForDVs);
+          break;
         default:
-          keysToConvert = keysOf1stRecord(jsonResult); // Use the 1st record to determine the column headings
+          keysToConvert = keysOf1stRecord(jsonResult);
           csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperSimple);
           break;
       }
@@ -500,6 +541,38 @@ var my_GAMI_NameSpace = function() {
     return row.permission_level === undefined ? '' : permission_descs[row.permission_level];
   }
 
+  function fieldMapperForFormsMemos(fieldname, row) {
+    if (fieldname !== 'status_desc') {
+      return row[fieldname] === undefined ? '' : JSON.stringify(row[fieldname], replacer);
+    }
+    const f_and_m_Statuses = ['Draft', 'Open', '#2', 'Sent', 'Closed'];
+    return row.status === undefined ? '' : f_and_m_Statuses[row.status];
+  }
+
+  function fieldMapperForActions(fieldname, row) {
+    if (fieldname !== 'status_desc') {
+      return row[fieldname] === undefined ? '' : JSON.stringify(row[fieldname], replacer);
+    }
+    const actionStatuses = ['Draft', 'Open', 'Ready for inspection', 'Disputed', 'Deferred', 'Completed'];
+    return row.status === undefined ? '' : actionStatuses[row.status];
+  }
+
+  function fieldMapperForPLs(fieldname, row) {
+    if (fieldname !== 'status_desc') {
+      return row[fieldname] === undefined ? '' : JSON.stringify(row[fieldname], replacer);
+    }
+    const plStatuses = ['Draft', 'Saved to project', 'Sent'];
+    return row.status === undefined ? '' : plStatuses[row.status];
+  }
+
+  function fieldMapperForDVs(fieldname, row) {
+    if (fieldname !== 'event_type_desc') {
+      return row[fieldname] === undefined ? '' : JSON.stringify(row[fieldname], replacer);
+    }
+    const drawingViewTyps = ['Web', 'APE Mobile app', 'Different app'];
+    return row.event_type === undefined ? '' : drawingViewTyps[row.event_type];
+  }
+
   function fieldMapperForTemplates(fieldname, row) {
     // Handle draft_template details differently because they're inside an object
     switch (fieldname) {
@@ -533,6 +606,7 @@ var my_GAMI_NameSpace = function() {
       setElementTextDisplay('giErrorText', dapResult, 'block');
     }
     document.getElementById('butn_pdf').disabled = false;
+    document.getElementById('viewer').style.display = 'block';
   }
 
   async function display_a_PDF() {
