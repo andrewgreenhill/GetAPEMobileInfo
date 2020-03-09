@@ -333,6 +333,11 @@ var my_GAMI_NameSpace = function() {
             'draft_template_href',
             'draft_template_id',
           ];
+          keysToConvert = insert_elementB_into_array_after_elementA(
+            'template_type_desc', //insert template_type_desc after template_type
+            keysToConvert,
+            'template_type'
+          );
           csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperForTemplates);
           break;
         case apeEntityType.User:
@@ -537,7 +542,7 @@ var my_GAMI_NameSpace = function() {
       return row[fieldname] === undefined ? '' : JSON.stringify(row[fieldname], replacer);
     }
     //Create a permission description from the permission_level:
-    const permission_descs = ['Read only', 'Create records', '#2', 'Send records', 'Edit project'];
+    const permission_descs = ['Read only', 'Create records', '#2', 'Send records', 'Edit project', 'Unexpected level'];
     return row.permission_level === undefined ? '' : permission_descs[row.permission_level];
   }
 
@@ -545,7 +550,7 @@ var my_GAMI_NameSpace = function() {
     if (fieldname !== 'status_desc') {
       return row[fieldname] === undefined ? '' : JSON.stringify(row[fieldname], replacer);
     }
-    const f_and_m_Statuses = ['Draft', 'Open', '#2', 'Sent', 'Closed'];
+    const f_and_m_Statuses = ['Draft', 'Open', '#2', 'Sent', 'Closed', 'Unexpected status'];
     return row.status === undefined ? '' : f_and_m_Statuses[row.status];
   }
 
@@ -553,7 +558,15 @@ var my_GAMI_NameSpace = function() {
     if (fieldname !== 'status_desc') {
       return row[fieldname] === undefined ? '' : JSON.stringify(row[fieldname], replacer);
     }
-    const actionStatuses = ['Draft', 'Open', 'Ready for inspection', 'Disputed', 'Deferred', 'Completed'];
+    const actionStatuses = [
+      'Draft',
+      'Open',
+      'Ready for inspection',
+      'Disputed',
+      'Deferred',
+      'Completed',
+      'Unexpected status',
+    ];
     return row.status === undefined ? '' : actionStatuses[row.status];
   }
 
@@ -561,7 +574,7 @@ var my_GAMI_NameSpace = function() {
     if (fieldname !== 'status_desc') {
       return row[fieldname] === undefined ? '' : JSON.stringify(row[fieldname], replacer);
     }
-    const plStatuses = ['Draft', 'Saved to project', 'Sent'];
+    const plStatuses = ['Draft', 'Saved to project', 'Sent', 'Unknown status'];
     return row.status === undefined ? '' : plStatuses[row.status];
   }
 
@@ -569,7 +582,7 @@ var my_GAMI_NameSpace = function() {
     if (fieldname !== 'event_type_desc') {
       return row[fieldname] === undefined ? '' : JSON.stringify(row[fieldname], replacer);
     }
-    const drawingViewTyps = ['Web', 'APE Mobile app', 'Different app'];
+    const drawingViewTyps = ['Web', 'APE Mobile app', 'Different app', 'Unknown view type'];
     return row.event_type === undefined ? '' : drawingViewTyps[row.event_type];
   }
 
@@ -580,7 +593,7 @@ var my_GAMI_NameSpace = function() {
         return row.draft_template === undefined ? '' : JSON.stringify(row.draft_template.href, replacer);
       case 'draft_template_id':
         return row.draft_template === undefined ? '' : JSON.stringify(row.draft_template.id, replacer);
-      case 'template_type':
+      case 'template_type_desc':
         const template_types = ['General Memo', 'Issue Memo', 'RFI Memo', 'Action', 'Form'];
         return row.template_type === undefined ? '' : template_types[row.template_type - 1]; //Convert type number to words
       default:
