@@ -312,93 +312,87 @@ var my_GAMI_NameSpace = function() {
     );
 
     if (jsonResult.length > 1) {
-      // Convert jsonResult to CSV
+      // Convert jsonResult to CSV:
       csv = '';
-      let keysToConvert = [];
-      switch (entityType) {
-        case apeEntityType.Template:
-          keysToConvert = [
-            // For templates, use pre-set keys for the template output CSV headings
-            'href',
-            'id',
-            'name',
-            'type',
-            'template_type',
-            'version',
-            'published_version',
-            'template_file_name',
-            'active',
-            'created_at',
-            'updated_at',
-            'draft_template_href',
-            'draft_template_id',
-          ];
-          keysToConvert = insert_elementB_into_array_after_elementA(
-            'template_type_desc', //insert template_type_desc after template_type
-            keysToConvert,
-            'template_type'
-          );
-          csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperForTemplates);
-          break;
-        case apeEntityType.User:
-          keysToConvert = keysOf1stRecord(jsonResult); // Use the 1st record to determine the column headings
-          csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperForUsers);
-          break;
-        case apeEntityType.Project:
-          keysToConvert = keysOf1stRecord(jsonResult);
-          //Keep LFCR because project Description can be multi-line:
-          csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperThatKeepsLFCR);
-          break;
-        case apeEntityType.ProjMember:
-          keysToConvert = keysOf1stRecord(jsonResult);
-          keysToConvert = insert_elementB_into_array_after_elementA(
-            'permission_desc', //insert permission_desc after permission_level
-            keysToConvert,
-            'permission_level'
-          );
-          csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperForProjectMembers);
-          break;
-        case apeEntityType.Form:
-        case apeEntityType.Memo:
-          keysToConvert = keysOf1stRecord(jsonResult);
-          keysToConvert = insert_elementB_into_array_after_elementA(
-            'status_desc', //insert status_desc after status
-            keysToConvert,
-            'status'
-          );
-          csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperForFormsMemos);
-          break;
-        case apeEntityType.Action:
-          keysToConvert = keysOf1stRecord(jsonResult);
-          keysToConvert = insert_elementB_into_array_after_elementA(
-            'status_desc', //insert status_desc after status
-            keysToConvert,
-            'status'
-          );
-          csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperForActions);
-          break;
-        case apeEntityType.PunchList:
-          keysToConvert = keysOf1stRecord(jsonResult);
-          keysToConvert = insert_elementB_into_array_after_elementA(
-            'status_desc', //insert status_desc after status
-            keysToConvert,
-            'status'
-          );
-          csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperForPLs);
-          break;
-        case apeEntityType.DrawingView:
-          keysToConvert = keysOf1stRecord(jsonResult);
-          keysToConvert = insert_elementB_into_array_after_elementA(
-            'event_type_desc', //insert event_type_desc after event_type
-            keysToConvert,
-            'event_type'
-          );
-          csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperForDVs);
-          break;
-        default:
-          keysToConvert = keysOf1stRecord(jsonResult);
-          csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperSimple);
-          break;
+      let keysToConvert = []; // This will define the columns of the CSV file
+      if (entityType === apeEntityType.Template) {
+        // For templates (only), use pre-set keys for the template output CSV headings:
+        keysToConvert = [
+          'href',
+          'id',
+          'name',
+          'type',
+          'template_type',
+          'version',
+          'published_version',
+          'template_file_name',
+          'active',
+          'created_at',
+          'updated_at',
+          'draft_template_href',
+          'draft_template_id',
+        ];
+        keysToConvert = insert_elementB_into_array_after_elementA(
+          'template_type_desc', //insert template_type_desc after template_type
+          keysToConvert,
+          'template_type'
+        );
+        csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperForTemplates);
+      } else {
+        keysToConvert = keysOf1stRecord(jsonResult); // Use the 1st record to determine the column headings
+        switch (entityType) {
+          case apeEntityType.User:
+            csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperForUsers);
+            break;
+          case apeEntityType.Project:
+            //Keep <LF><CR> because project Description can be multi-line:
+            csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperThatKeepsLFCR);
+            break;
+          case apeEntityType.ProjMember:
+            keysToConvert = insert_elementB_into_array_after_elementA(
+              'permission_desc', //insert permission_desc after permission_level
+              keysToConvert,
+              'permission_level'
+            );
+            csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperForProjectMembers);
+            break;
+          case apeEntityType.Form:
+          case apeEntityType.Memo:
+            keysToConvert = insert_elementB_into_array_after_elementA(
+              'status_desc', //insert status_desc after status
+              keysToConvert,
+              'status'
+            );
+            csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperForFormsMemos);
+            break;
+          case apeEntityType.Action:
+            keysToConvert = insert_elementB_into_array_after_elementA(
+              'status_desc', //insert status_desc after status
+              keysToConvert,
+              'status'
+            );
+            csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperForActions);
+            break;
+          case apeEntityType.PunchList:
+            keysToConvert = insert_elementB_into_array_after_elementA(
+              'status_desc', //insert status_desc after status
+              keysToConvert,
+              'status'
+            );
+            csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperForPLs);
+            break;
+          case apeEntityType.DrawingView:
+            keysToConvert = insert_elementB_into_array_after_elementA(
+              'event_type_desc', //insert event_type_desc after event_type
+              keysToConvert,
+              'event_type'
+            );
+            csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperForDVs);
+            break;
+          default:
+            csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperSimple);
+            break;
+        }
       }
 
       // Create a default filename for the output file, and display it to the user:
