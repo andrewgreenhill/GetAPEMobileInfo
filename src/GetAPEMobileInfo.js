@@ -27,6 +27,13 @@ var my_GAMI_NameSpace = function() {
   };
   var specialParams = { dontRLUserCheck: true }; //By default, don't rate-limit user permissions checks
   var stopped = false; //State changed by use of the stop button
+  const dChoice = valueOfQueryStringParam('descr') || 'replace'; // Description
+
+  function valueOfQueryStringParam(paramName) {
+    var url_string = window.location.href;
+    var url = new URL(url_string);
+    return url.searchParams.get(paramName);
+  }
 
   function siteNameChanged() {
     specialParams.dontRLUserCheck = true; //Don't rate-limit user-permission checks following a site change
@@ -74,12 +81,6 @@ var my_GAMI_NameSpace = function() {
         et: apeEntityType.Annotation,
       },
     ];
-  }
-
-  function valueOfQueryStringParam(paramName) {
-    var url_string = window.location.href;
-    var url = new URL(url_string);
-    return url.searchParams.get(paramName);
   }
 
   initialise_web_page(); //Set things up in the web page HTML:
@@ -154,13 +155,32 @@ var my_GAMI_NameSpace = function() {
     sel.appendChild(opt); // add opt to end of select box (sel)
   }
 
-  function insert_elementB_into_array_after_elementA(elemntB, arry, elemntA) {
-    // Example: insert_elementB_into_array_after_elementA('e', ['q','w','r','t'], 'w') => ['q','w','e','r','t']
+  function in_array_replace_A_with_B(arry, elemntA, elemntB) {
+    // Example: in_array_replace_A_with_B(['q','w','r','t'], 'w', 'e') => ['q','e','r','t']
+    let position = arry.indexOf(elemntA) + 1;
+    if (position > 0) {
+      return arry.slice(0, position - 1).concat(elemntB, arry.slice(position));
+    }
+    return arry;
+  }
+
+  function in_array_after_A_insert_B(arry, elemntA, elemntB) {
+    // Example: in_array_after_A_insert_B(['q','w','r','t'], 'w', 'e') => ['q','w','e','r','t']
     let position = arry.indexOf(elemntA) + 1;
     if (position > 0) {
       return arry.slice(0, position).concat(elemntB, arry.slice(position));
     }
     return arry;
+  }
+
+  function adjustCols(cols, dChoice, fieldA, fieldB) {
+    // Based on dChoice, add fieldB after fieldA, or replace fieldA, or make no change:
+    if (dChoice.toLowerCase() === 'none') {
+      return cols; //Columns are unchanged
+    } else if (dChoice.toLowerCase() === 'replace') {
+      return in_array_replace_A_with_B(cols, fieldA, fieldB);
+    } // else add fieldB after fieldA:
+    return in_array_after_A_insert_B(cols, fieldA, fieldB);
   }
 
   async function getInfoHandler() {
@@ -312,93 +332,63 @@ var my_GAMI_NameSpace = function() {
     );
 
     if (jsonResult.length > 1) {
-      // Convert jsonResult to CSV
+      // Convert jsonResult to CSV:
       csv = '';
-      let keysToConvert = [];
-      switch (entityType) {
-        case apeEntityType.Template:
-          keysToConvert = [
-            // For templates, use pre-set keys for the template output CSV headings
-            'href',
-            'id',
-            'name',
-            'type',
-            'template_type',
-            'version',
-            'published_version',
-            'template_file_name',
-            'active',
-            'created_at',
-            'updated_at',
-            'draft_template_href',
-            'draft_template_id',
-          ];
-          keysToConvert = insert_elementB_into_array_after_elementA(
-            'template_type_desc', //insert template_type_desc after template_type
-            keysToConvert,
-            'template_type'
-          );
-          csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperForTemplates);
-          break;
-        case apeEntityType.User:
-          keysToConvert = keysOf1stRecord(jsonResult); // Use the 1st record to determine the column headings
-          csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperForUsers);
-          break;
-        case apeEntityType.Project:
-          keysToConvert = keysOf1stRecord(jsonResult);
-          //Keep LFCR because project Description can be multi-line:
-          csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperThatKeepsLFCR);
-          break;
-        case apeEntityType.ProjMember:
-          keysToConvert = keysOf1stRecord(jsonResult);
-          keysToConvert = insert_elementB_into_array_after_elementA(
-            'permission_desc', //insert permission_desc after permission_level
-            keysToConvert,
-            'permission_level'
-          );
-          csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperForProjectMembers);
-          break;
-        case apeEntityType.Form:
-        case apeEntityType.Memo:
-          keysToConvert = keysOf1stRecord(jsonResult);
-          keysToConvert = insert_elementB_into_array_after_elementA(
-            'status_desc', //insert status_desc after status
-            keysToConvert,
-            'status'
-          );
-          csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperForFormsMemos);
-          break;
-        case apeEntityType.Action:
-          keysToConvert = keysOf1stRecord(jsonResult);
-          keysToConvert = insert_elementB_into_array_after_elementA(
-            'status_desc', //insert status_desc after status
-            keysToConvert,
-            'status'
-          );
-          csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperForActions);
-          break;
-        case apeEntityType.PunchList:
-          keysToConvert = keysOf1stRecord(jsonResult);
-          keysToConvert = insert_elementB_into_array_after_elementA(
-            'status_desc', //insert status_desc after status
-            keysToConvert,
-            'status'
-          );
-          csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperForPLs);
-          break;
-        case apeEntityType.DrawingView:
-          keysToConvert = keysOf1stRecord(jsonResult);
-          keysToConvert = insert_elementB_into_array_after_elementA(
-            'event_type_desc', //insert event_type_desc after event_type
-            keysToConvert,
-            'event_type'
-          );
-          csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperForDVs);
-          break;
-        default:
-          keysToConvert = keysOf1stRecord(jsonResult);
-          csv = json2csvWithfieldMapper(jsonResult, keysToConvert, fieldMapperSimple);
-          break;
+      let csvCols = []; // This will define the columns of the CSV file
+      if (entityType === apeEntityType.Template) {
+        // For templates (only), use pre-set keys for the template output CSV headings:
+        csvCols = [
+          'href',
+          'id',
+          'name',
+          'type',
+          'template_type',
+          'version',
+          'published_version',
+          'template_file_name',
+          'active',
+          'created_at',
+          'updated_at',
+          'draft_template_href',
+          'draft_template_id',
+        ];
+        csvCols = adjustCols(csvCols, dChoice, 'template_type', 'template_type_desc');
+        csv = json2csvWithfieldMapper(jsonResult, csvCols, fieldMapperForTemplates);
+      } else {
+        csvCols = keysOf1stRecord(jsonResult); // Use the 1st record to determine the column headings
+        switch (entityType) {
+          case apeEntityType.User:
+            csv = json2csvWithfieldMapper(jsonResult, csvCols, fieldMapperForUsers);
+            break;
+          case apeEntityType.Project:
+            //Keep <LF><CR> because project Description can be multi-line:
+            csv = json2csvWithfieldMapper(jsonResult, csvCols, fieldMapperThatKeepsLFCR);
+            break;
+          case apeEntityType.ProjMember:
+            csvCols = adjustCols(csvCols, dChoice, 'permission_level', 'permission_desc');
+            csv = json2csvWithfieldMapper(jsonResult, csvCols, fieldMapperForProjectMembers);
+            break;
+          case apeEntityType.Form:
+          case apeEntityType.Memo:
+            csvCols = adjustCols(csvCols, dChoice, 'status', 'status_desc');
+            csv = json2csvWithfieldMapper(jsonResult, csvCols, fieldMapperForFormsMemos);
+            break;
+          case apeEntityType.Action:
+            csvCols = adjustCols(csvCols, dChoice, 'status', 'status_desc');
+            csv = json2csvWithfieldMapper(jsonResult, csvCols, fieldMapperForActions);
+            break;
+          case apeEntityType.PunchList:
+            csvCols = adjustCols(csvCols, dChoice, 'status', 'status_desc');
+            csv = json2csvWithfieldMapper(jsonResult, csvCols, fieldMapperForPLs);
+            break;
+          case apeEntityType.DrawingView:
+            csvCols = adjustCols(csvCols, dChoice, 'event_type', 'event_type_desc');
+            csv = json2csvWithfieldMapper(jsonResult, csvCols, fieldMapperForDVs);
+            break;
+          default:
+            csv = json2csvWithfieldMapper(jsonResult, csvCols, fieldMapperSimple);
+            break;
+        }
       }
 
       // Create a default filename for the output file, and display it to the user:
