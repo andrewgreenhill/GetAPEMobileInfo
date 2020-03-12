@@ -25,11 +25,12 @@ var my_GAMI_NameSpace = function() {
     proxy: '',
     defaultTimeout: 20000,
   };
+  const paramD = valueOfQueryStringParam('descr') || 'replace'; // Description
+  const paramCh = valueOfQueryStringParam('convertHref') || 'true';
+  const convertHref = paramCh.toLowerCase() !== 'false';
+  const paramO = valueOfQueryStringParam('options');
   var specialParams = { dontRLUserCheck: true }; //By default, don't rate-limit user permissions checks
   var stopped = false; //State changed by use of the stop button
-  const dParam = valueOfQueryStringParam('descr') || 'replace'; // Description
-  const chParam = valueOfQueryStringParam('convertHref') || 'true';
-  const convertHref = chParam.toLowerCase() !== 'false';
 
   function valueOfQueryStringParam(paramName) {
     var url_string = window.location.href;
@@ -47,7 +48,7 @@ var my_GAMI_NameSpace = function() {
 
   //Info types offered to the user, plus names for reporting & filenaming, and EntityType for using it with API helper
   let endpointOptions = [];
-  if (valueOfQueryStringParam('options') !== 'all') {
+  if (paramO !== 'all') {
     endpointOptions = [
       { text: 'Users', name: 'user', filename: 'Users', et: apeEntityType.User },
       { text: 'Templates', name: 'template', filename: 'Templates', et: apeEntityType.Template },
@@ -175,11 +176,11 @@ var my_GAMI_NameSpace = function() {
     return arry;
   }
 
-  function adjustCols(cols, dParam, fieldA, fieldB) {
-    // Based on dParam, add fieldB after fieldA, or replace fieldA, or make no change:
-    if (dParam.toLowerCase() === 'none') {
+  function adjustCols(cols, paramD, fieldA, fieldB) {
+    // Based on paramD, add fieldB after fieldA, or replace fieldA, or make no change:
+    if (paramD.toLowerCase() === 'none') {
       return cols; //Columns are unchanged
-    } else if (dParam.toLowerCase() === 'replace') {
+    } else if (paramD.toLowerCase() === 'replace') {
       return in_array_replace_A_with_B(cols, fieldA, fieldB);
     } // else add fieldB after fieldA:
     return in_array_after_A_insert_B(cols, fieldA, fieldB);
@@ -354,7 +355,7 @@ var my_GAMI_NameSpace = function() {
           'draft_template_href',
           'draft_template_id',
         ];
-        csvCols = adjustCols(csvCols, dParam, 'template_type', 'template_type_desc');
+        csvCols = adjustCols(csvCols, paramD, 'template_type', 'template_type_desc');
         csv = json2csvWithfieldMapper(jsonResult, csvCols, fieldMapperForTemplates);
       } else {
         csvCols = keysOf1stRecord(jsonResult); // Use the 1st record to determine the column headings
@@ -367,24 +368,24 @@ var my_GAMI_NameSpace = function() {
             csv = json2csvWithfieldMapper(jsonResult, csvCols, fieldMapperThatKeepsLFCR);
             break;
           case apeEntityType.ProjMember:
-            csvCols = adjustCols(csvCols, dParam, 'permission_level', 'permission_desc');
+            csvCols = adjustCols(csvCols, paramD, 'permission_level', 'permission_desc');
             csv = json2csvWithfieldMapper(jsonResult, csvCols, fieldMapperForProjectMembers);
             break;
           case apeEntityType.Form:
           case apeEntityType.Memo:
-            csvCols = adjustCols(csvCols, dParam, 'status', 'status_desc');
+            csvCols = adjustCols(csvCols, paramD, 'status', 'status_desc');
             csv = json2csvWithfieldMapper(jsonResult, csvCols, fieldMapperForFormsMemos);
             break;
           case apeEntityType.Action:
-            csvCols = adjustCols(csvCols, dParam, 'status', 'status_desc');
+            csvCols = adjustCols(csvCols, paramD, 'status', 'status_desc');
             csv = json2csvWithfieldMapper(jsonResult, csvCols, fieldMapperForActions);
             break;
           case apeEntityType.PunchList:
-            csvCols = adjustCols(csvCols, dParam, 'status', 'status_desc');
+            csvCols = adjustCols(csvCols, paramD, 'status', 'status_desc');
             csv = json2csvWithfieldMapper(jsonResult, csvCols, fieldMapperForPLs);
             break;
           case apeEntityType.DrawingView:
-            csvCols = adjustCols(csvCols, dParam, 'event_type', 'event_type_desc');
+            csvCols = adjustCols(csvCols, paramD, 'event_type', 'event_type_desc');
             csv = json2csvWithfieldMapper(jsonResult, csvCols, fieldMapperForDVs);
             break;
           default:
