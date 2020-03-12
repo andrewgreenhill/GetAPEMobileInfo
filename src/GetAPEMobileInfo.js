@@ -10,7 +10,7 @@ An assistant for getting data from APE Mobile sites, including:
 By Andrew Greenhill.
 -----------------------------------------------------------------------------*/
 import { aGet, apeEntityType, aResponseError } from './APE_API_Helper.js';
-const gami_version = '0.6.8, beta';
+const gami_version = '0.6.9, beta';
 
 var my_GAMI_NameSpace = function() {
   //A function wrapper simply to create my own 'Get APE Mobile Info' name space
@@ -27,7 +27,9 @@ var my_GAMI_NameSpace = function() {
   };
   var specialParams = { dontRLUserCheck: true }; //By default, don't rate-limit user permissions checks
   var stopped = false; //State changed by use of the stop button
-  const dChoice = valueOfQueryStringParam('descr') || 'replace'; // Description
+  const dParam = valueOfQueryStringParam('descr') || 'replace'; // Description
+  const chParam = valueOfQueryStringParam('convertHref') || 'true';
+  const convertHref = chParam.toLowerCase() !== 'false';
 
   function valueOfQueryStringParam(paramName) {
     var url_string = window.location.href;
@@ -173,11 +175,11 @@ var my_GAMI_NameSpace = function() {
     return arry;
   }
 
-  function adjustCols(cols, dChoice, fieldA, fieldB) {
-    // Based on dChoice, add fieldB after fieldA, or replace fieldA, or make no change:
-    if (dChoice.toLowerCase() === 'none') {
+  function adjustCols(cols, dParam, fieldA, fieldB) {
+    // Based on dParam, add fieldB after fieldA, or replace fieldA, or make no change:
+    if (dParam.toLowerCase() === 'none') {
       return cols; //Columns are unchanged
-    } else if (dChoice.toLowerCase() === 'replace') {
+    } else if (dParam.toLowerCase() === 'replace') {
       return in_array_replace_A_with_B(cols, fieldA, fieldB);
     } // else add fieldB after fieldA:
     return in_array_after_A_insert_B(cols, fieldA, fieldB);
@@ -352,7 +354,7 @@ var my_GAMI_NameSpace = function() {
           'draft_template_href',
           'draft_template_id',
         ];
-        csvCols = adjustCols(csvCols, dChoice, 'template_type', 'template_type_desc');
+        csvCols = adjustCols(csvCols, dParam, 'template_type', 'template_type_desc');
         csv = json2csvWithfieldMapper(jsonResult, csvCols, fieldMapperForTemplates);
       } else {
         csvCols = keysOf1stRecord(jsonResult); // Use the 1st record to determine the column headings
@@ -365,28 +367,28 @@ var my_GAMI_NameSpace = function() {
             csv = json2csvWithfieldMapper(jsonResult, csvCols, fieldMapperThatKeepsLFCR);
             break;
           case apeEntityType.ProjMember:
-            csvCols = adjustCols(csvCols, dChoice, 'permission_level', 'permission_desc');
+            csvCols = adjustCols(csvCols, dParam, 'permission_level', 'permission_desc');
             csv = json2csvWithfieldMapper(jsonResult, csvCols, fieldMapperForProjectMembers);
             break;
           case apeEntityType.Form:
           case apeEntityType.Memo:
-            csvCols = adjustCols(csvCols, dChoice, 'status', 'status_desc');
+            csvCols = adjustCols(csvCols, dParam, 'status', 'status_desc');
             csv = json2csvWithfieldMapper(jsonResult, csvCols, fieldMapperForFormsMemos);
             break;
           case apeEntityType.Action:
-            csvCols = adjustCols(csvCols, dChoice, 'status', 'status_desc');
+            csvCols = adjustCols(csvCols, dParam, 'status', 'status_desc');
             csv = json2csvWithfieldMapper(jsonResult, csvCols, fieldMapperForActions);
             break;
           case apeEntityType.PunchList:
-            csvCols = adjustCols(csvCols, dChoice, 'status', 'status_desc');
+            csvCols = adjustCols(csvCols, dParam, 'status', 'status_desc');
             csv = json2csvWithfieldMapper(jsonResult, csvCols, fieldMapperForPLs);
             break;
           case apeEntityType.DrawingView:
-            csvCols = adjustCols(csvCols, dChoice, 'event_type', 'event_type_desc');
+            csvCols = adjustCols(csvCols, dParam, 'event_type', 'event_type_desc');
             csv = json2csvWithfieldMapper(jsonResult, csvCols, fieldMapperForDVs);
             break;
           default:
-            csv = json2csvWithfieldMapper(jsonResult, csvCols, fieldMapperSimple);
+            csv = json2csvWithfieldMapper(jsonResult, csvCols, fieldMapperBasic);
             break;
         }
       }
@@ -497,7 +499,15 @@ var my_GAMI_NameSpace = function() {
 
   const replacer = (key, value) => (value === null ? '' : value); //Used in fieldMapper functions
 
-  function fieldMapperSimple(fieldname, row) {
+  function api_url_to_normal_url(x) {
+    //Remove 'public_api/v2/' from URL:
+    return x.replace('public_api/v2/', '');
+  }
+
+  function fieldMapperBasic(fieldname, row) {
+    if (fieldname === 'href' && convertHref) {
+      return row.href === undefined ? '' : JSON.stringify(api_url_to_normal_url(row.href), replacer);
+    }
     return row[fieldname] === undefined ? '' : JSON.stringify(row[fieldname], replacer);
   }
 
@@ -512,7 +522,7 @@ var my_GAMI_NameSpace = function() {
 
   function fieldMapperForUsers(fieldname, row) {
     if (fieldname !== 'user_type') {
-      return row[fieldname] === undefined ? '' : JSON.stringify(row[fieldname], replacer);
+      return fieldMapperBasic(fieldname, row);
     }
     //Re-map the user_type descriptions to newer terminology:
     switch (row.user_type) {
@@ -529,7 +539,7 @@ var my_GAMI_NameSpace = function() {
 
   function fieldMapperForProjectMembers(fieldname, row) {
     if (fieldname !== 'permission_desc') {
-      return row[fieldname] === undefined ? '' : JSON.stringify(row[fieldname], replacer);
+      return fieldMapperBasic(fieldname, row);
     }
     //Create a permission description from the permission_level:
     const permission_descs = ['Read only', 'Create records', '#2', 'Send records', 'Edit project', 'Unexpected level'];
@@ -538,7 +548,7 @@ var my_GAMI_NameSpace = function() {
 
   function fieldMapperForFormsMemos(fieldname, row) {
     if (fieldname !== 'status_desc') {
-      return row[fieldname] === undefined ? '' : JSON.stringify(row[fieldname], replacer);
+      return fieldMapperBasic(fieldname, row);
     }
     const f_and_m_Statuses = ['Draft', 'Open', '#2', 'Sent', 'Closed', 'Unexpected status'];
     return row.status === undefined ? '' : f_and_m_Statuses[row.status];
@@ -546,7 +556,7 @@ var my_GAMI_NameSpace = function() {
 
   function fieldMapperForActions(fieldname, row) {
     if (fieldname !== 'status_desc') {
-      return row[fieldname] === undefined ? '' : JSON.stringify(row[fieldname], replacer);
+      return fieldMapperBasic(fieldname, row);
     }
     const actionStatuses = [
       'Draft',
@@ -562,7 +572,7 @@ var my_GAMI_NameSpace = function() {
 
   function fieldMapperForPLs(fieldname, row) {
     if (fieldname !== 'status_desc') {
-      return row[fieldname] === undefined ? '' : JSON.stringify(row[fieldname], replacer);
+      return fieldMapperBasic(fieldname, row);
     }
     const plStatuses = ['Draft', 'Saved to project', 'Sent', 'Unknown status'];
     return row.status === undefined ? '' : plStatuses[row.status];
@@ -570,7 +580,7 @@ var my_GAMI_NameSpace = function() {
 
   function fieldMapperForDVs(fieldname, row) {
     if (fieldname !== 'event_type_desc') {
-      return row[fieldname] === undefined ? '' : JSON.stringify(row[fieldname], replacer);
+      return fieldMapperBasic(fieldname, row);
     }
     const drawingViewTyps = ['Web', 'APE Mobile app', 'Different app', 'Unknown view type'];
     return row.event_type === undefined ? '' : drawingViewTyps[row.event_type];
@@ -580,6 +590,11 @@ var my_GAMI_NameSpace = function() {
     // Handle draft_template details differently because they're inside an object
     switch (fieldname) {
       case 'draft_template_href':
+        if (convertHref) {
+          return row.draft_template === undefined
+            ? ''
+            : JSON.stringify(api_url_to_normal_url(row.draft_template.href), replacer);
+        }
         return row.draft_template === undefined ? '' : JSON.stringify(row.draft_template.href, replacer);
       case 'draft_template_id':
         return row.draft_template === undefined ? '' : JSON.stringify(row.draft_template.id, replacer);
@@ -587,7 +602,7 @@ var my_GAMI_NameSpace = function() {
         const template_types = ['General Memo', 'Issue Memo', 'RFI Memo', 'Action', 'Form'];
         return row.template_type === undefined ? '' : template_types[row.template_type - 1]; //Convert type number to words
       default:
-        return row[fieldname] === undefined ? '' : JSON.stringify(row[fieldname], replacer);
+        return fieldMapperBasic(fieldname, row);
     }
   }
 
