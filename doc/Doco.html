@@ -28,12 +28,33 @@
         For each entity type there are options (e.g. filter by whether they are active or not) based on the query parameters that the API provides.
         <h2>Features</h2>
         <p>Its features include:</p>
-        <p>* Handles more than 1000 items (overcoming the default and usual-maximum limits of the API).</p>
+        <ul>
+            <li>Easy to use.</li>
+            <li>Handles more than 1000 items (overcoming the default and usual-maximum limits of the API).</li>
+            <li>Can convert numeric codes to descriptions (see <em>Output</em> below)</li>
+        </ul>
         <h2>Requirements</h2>
         <p>The site needs to have "API enabled" setting turned on, under Admin =&gt; Organisation.</p>
         <p>It is designed for use in Chrome and Firefox. It currently does not work with MS Internet Explorer and Edge.</p>
         <h2>Output</h2>
+        <h3>Times</h3>
         <p>Output times are in 'Z' format.</p>
+        <h3>Descriptions</h3>
+        <p>In some cases where the API outputs data as numbers (eg the template type for <em>forms</em> is <em>4</em>)
+            then Get APE Mobile Info can output that as a description, either instead of the number or in addition to it.
+            That behaviour can be altered by using one of the following query parameters:
+            <ul>
+                <li>descr=add</li>
+                <li>descr=replace</li>
+                <li>descr=none</li>
+            </ul>
+        By default the description is output instead of numbers (the <em>replace</em> option).
+        <br>
+        Descriptions are output into a differently-named column to that in which the number appears (similar though, and with a suffix of _desc).
+        </p>
+        <h3>URLs</h3>
+        <p>The output for URLs (usually 'href') will have <em>public_api/v2/</em> removed, by default, to convert them from
+            API type URLs to conventional URLs. That can be stopped by using query parameter convertHref=false</p>
         <h2>Templates</h2>
         <p>To understand the difference between <em>Draft</em>, <em>Published</em> and <em>Archived</em> templates,
             see <a href="https://apemobile.docs.apiary.io/#reference/forms">https://apemobile.docs.apiary.io/#reference/forms</a>
