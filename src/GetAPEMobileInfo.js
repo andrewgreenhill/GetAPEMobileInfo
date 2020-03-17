@@ -10,7 +10,12 @@ An assistant for getting data from APE Mobile sites, including:
 By Andrew Greenhill.
 -----------------------------------------------------------------------------*/
 import { aGet, apeEntityType, aResponseError } from './APE_API_Helper.js';
-const gami_version = '0.6.9, beta';
+import { isApeMobileSite, ape_api_url_to_normal_url } from './AG_APEMobile_functions.js';
+import { in_array_replace_A_with_B, in_array_after_A_insert_B } from './AG_array_functions.js';
+import { removeStartOfString, removeEndOfString } from './AG_string_functions.js';
+import { currentYYMMDD } from './AG_date_functions.js';
+import { valueOfQueryStringParam } from './AG_web_page_functions.js';
+const gami_version = '0.7.0, beta';
 
 var my_GAMI_NameSpace = function() {
   //A function wrapper simply to create my own 'Get APE Mobile Info' name space
@@ -31,12 +36,6 @@ var my_GAMI_NameSpace = function() {
   const paramO = valueOfQueryStringParam('options');
   var specialParams = { dontRLUserCheck: true }; //By default, don't rate-limit user permissions checks
   var stopped = false; //State changed by use of the stop button
-
-  function valueOfQueryStringParam(paramName) {
-    var url_string = window.location.href;
-    var url = new URL(url_string);
-    return url.searchParams.get(paramName);
-  }
 
   function siteNameChanged() {
     specialParams.dontRLUserCheck = true; //Don't rate-limit user-permission checks following a site change
@@ -156,24 +155,6 @@ var my_GAMI_NameSpace = function() {
     opt.appendChild(document.createTextNode(text)); // create text node to add to option element (opt)
     opt.value = value; // set value property of opt
     sel.appendChild(opt); // add opt to end of select box (sel)
-  }
-
-  function in_array_replace_A_with_B(arry, elemntA, elemntB) {
-    // Example: in_array_replace_A_with_B(['q','w','r','t'], 'w', 'e') => ['q','e','r','t']
-    let position = arry.indexOf(elemntA) + 1;
-    if (position > 0) {
-      return arry.slice(0, position - 1).concat(elemntB, arry.slice(position));
-    }
-    return arry;
-  }
-
-  function in_array_after_A_insert_B(arry, elemntA, elemntB) {
-    // Example: in_array_after_A_insert_B(['q','w','r','t'], 'w', 'e') => ['q','w','e','r','t']
-    let position = arry.indexOf(elemntA) + 1;
-    if (position > 0) {
-      return arry.slice(0, position).concat(elemntB, arry.slice(position));
-    }
-    return arry;
   }
 
   function adjustCols(cols, paramD, fieldA, fieldB) {
@@ -463,30 +444,6 @@ var my_GAMI_NameSpace = function() {
     );
   }
 
-  function isApeMobileSite(siteDomain) {
-    const pattern1 = new RegExp('^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9].apemobile.com$');
-    const pattern2 = new RegExp(
-      '^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9].apemobile-[a-zA-Z0-9-]{0,176}[a-zA-Z0-9].com$'
-    );
-    return pattern1.test(siteDomain) || pattern2.test(siteDomain);
-  }
-
-  function removeStartOfString(str, marker) {
-    return str.split(marker).pop();
-  }
-
-  function removeEndOfString(str, marker) {
-    return str.split(marker)[0];
-  }
-
-  function currentYYMMDD() {
-    var today = new Date();
-    var dd = String(today.getDate()).padStart(2, '0');
-    var mm = String(today.getMonth() + 1).padStart(2, '0');
-    var yy = today.getFullYear() - 2000; //Assuming between the years 2000 and 2099
-    return yy + mm + dd;
-  }
-
   function keysOf1stRecord(jsonArray) {
     return Object.keys(jsonArray[0]);
   }
@@ -500,14 +457,9 @@ var my_GAMI_NameSpace = function() {
 
   const replacer = (key, value) => (value === null ? '' : value); //Used in fieldMapper functions
 
-  function api_url_to_normal_url(x) {
-    //Remove 'public_api/v2/' from URL:
-    return x.replace('public_api/v2/', '');
-  }
-
   function fieldMapperBasic(fieldname, row) {
     if (fieldname === 'href' && convertHref) {
-      return row.href === undefined ? '' : JSON.stringify(api_url_to_normal_url(row.href), replacer);
+      return row.href === undefined ? '' : JSON.stringify(ape_api_url_to_normal_url(row.href), replacer);
     }
     return row[fieldname] === undefined ? '' : JSON.stringify(row[fieldname], replacer);
   }
@@ -594,7 +546,7 @@ var my_GAMI_NameSpace = function() {
         if (convertHref) {
           return row.draft_template === undefined
             ? ''
-            : JSON.stringify(api_url_to_normal_url(row.draft_template.href), replacer);
+            : JSON.stringify(ape_api_url_to_normal_url(row.draft_template.href), replacer);
         }
         return row.draft_template === undefined ? '' : JSON.stringify(row.draft_template.href, replacer);
       case 'draft_template_id':
@@ -658,4 +610,4 @@ var my_GAMI_NameSpace = function() {
     return true;
   }
 };
-my_GAMI_NameSpace(); //End of my_GAMI_NameSpace function; now run that.
+my_GAMI_NameSpace(); //End of my_GAMI_NameSpace function; now run it.
