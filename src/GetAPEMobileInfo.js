@@ -10,11 +10,11 @@ An assistant for getting data from APE Mobile sites, including:
 By Andrew Greenhill.
 -----------------------------------------------------------------------------*/
 import { aGet, apeEntityType, aResponseError } from './APE_API_Helper.js';
-import { isApeMobileSite, ape_api_url_to_normal_url } from './AG_APEMobile_functions.js';
-import { in_array_replace_A_with_B, in_array_after_A_insert_B } from './AG_array_functions.js';
-import { removeStartOfString, removeEndOfString } from './AG_string_functions.js';
-import { currentYYMMDD } from './AG_date_functions.js';
-import { valueOfQueryStringParam } from './AG_web_page_functions.js';
+import { isApeMobileSite, ape_api_url_to_normal_url } from './lib/AG_APEMobile_functions.js';
+import { in_array_replace_A_with_B, in_array_after_A_insert_B } from './lib/AG_array_functions.js';
+import { removeStartOfString, removeEndOfString } from './lib/AG_string_functions.js';
+import { currentYYMMDD } from './lib/AG_date_functions.js';
+import { valueOfQueryStringParam } from './lib/AG_web_page_functions.js';
 const gami_version = '0.7.0, beta';
 
 var my_GAMI_NameSpace = function() {
