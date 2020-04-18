@@ -16,8 +16,9 @@
 } */
 
 /* I switched from using the fonts above to ones from https://fonts.google.com/specimen/Open+Sans */
+@import url('//fonts.googleapis.com/css?family=Open+Sans:400,400i,700&display=swap');
 
 body {
-    font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 1.05em;
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 1.05em;
 }

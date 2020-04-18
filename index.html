@@ -1,191 +1,218 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <title>Get APE Mobile Info</title>
     <!-- By Andrew Greenhill -->
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link href="//fonts.googleapis.com/css?family=Open+Sans:400,400i,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="src/Fonts.css">
-    <link rel="stylesheet" type="text/css" href="src/GetAPEMobileInfo.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" type="text/css" href="src/Fonts.css" />
+    <link rel="stylesheet" type="text/css" href="src/GetAPEMobileInfo.css" />
     <script src="src/GetAPEMobileInfo.js" type="module" async></script>
-</head>
-<body>
+  </head>
+  <body>
     <div id="sidebar"></div>
     <div id="topbar">
-        <img class="apeLogo" height="40px" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+PCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj48c3ZnIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHZpZXdCb3g9IjAgMCAxMzIwIDY3NSIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4bWw6c3BhY2U9InByZXNlcnZlIiBzdHlsZT0iZmlsbC1ydWxlOmV2ZW5vZGQ7Y2xpcC1ydWxlOmV2ZW5vZGQ7c3Ryb2tlLWxpbmVqb2luOnJvdW5kO3N0cm9rZS1taXRlcmxpbWl0OjEuNDE0MjE7Ij48cGF0aCBkPSJNNjgxLjkxLDU2OS43NTljOC4yODcsLTI0Ljc2MiAzNi40NTYsLTQ0Ljk5NyA2Mi41NjUsLTQ0Ljk5N2w0MjMuNTA3LDBsMTQ2LjMwOSwtNDE5LjE4NGMyMC4yODEsLTU4LjA3OCAtMTMuNDYyLC0xMDUuNTc4IC03NC45NSwtMTA1LjU3OGwtOTIyLjY2OSwwYy02MS41MDMsMCAtMTI4LjQwNiw0Ny41IC0xNDguNjc4LDEwNS41NzhsLTE2Mi4xMDYsNDY0LjQzNGMtMjAuMjYsNTguMDg1IDEzLjQ3MiwxMDUuNTc1IDc0Ljk2NSwxMDUuNTc1bDU2NS41NDQsMGwzNS41MTMsLTEwNS44MjhaIiBzdHlsZT0iZmlsbDojMDAzMzY4O2ZpbGwtcnVsZTpub256ZXJvOyIvPjxwYXRoIGQ9Ik02MzkuMDE2LDcwLjEwNmwtMi4zNiwwYy0zOC4yLDAgLTcyLjkyOCwxNS42MjIgLTk4LjExNSw0MC44Yy0yNS4yLDI1LjE4NSAtNDAuODE5LDU5LjkxOSAtNDAuODE5LDk4LjA5NGwwLDEwOC4yOTdjMCwzMS4xMzcgMjguMzMxLDU2LjM3NSA1OS40NSw1Ni4zNzVjMzEuMTE5LDAgNTYuMzI1LC0yNS4yMzggNTYuMzI1LC01Ni4zNzVsMC4wNDQsMGwwLC0xMDMuNDY2YzAuMDE1LC0xNC41MzcgMTAuNzcxLC0yNi41MTggMjQuMjk3LC0yNi41NDNjMTMuNTQzLDAuMDI1IDI0LjI2NSwxMi4wMDYgMjQuMjk2LDI2LjU0M2wwLDE1Mi4zODJjMCwxMy41NDMgLTkuODYyLDE3Ljc0OSAtMjQuNDUsMTcuNzQ5bC0zNS4wNDcsMGMtNDYuNTE4LDAuMDgyIC0xMDQuOTI4LDMxLjY2IC0xMDQuOTUzLDEwNy42NDFsMCw2Ni4zMTZjMCwzMS4xMDMgMjguMzY5LDU2LjMyOCA1OS40ODgsNTYuMzI4YzMxLjExOSwwIDU2LjMyNSwtMjUuMjI1IDU2LjMyNSwtNTYuMzI4bDAuMDQ0LDBjMCwwIDAsLTEzLjQwMyAwLC0zOS4yMzVjMCwtMjUuOTAzIDI2LjYxMiwtMjUuNjUgNDUuMjM3LC0yNS42NWM0Ny41MjgsMCA3Ny41ODEsLTE4LjUyMSA5NS40MDYsLTQ0LjE3MWMxNy44MSwtMjUuNjM1IDIzLjc4NSwtNTQuMjU3IDIzLjczNSwtNjQuNzI5bDAuMDUsLTE3NS4xMzRjMCwtMzguMTc1IC0xNS42NTYsLTcyLjkwOSAtNDAuODEzLC05OC4wOTRjLTI1LjIwMywtMjUuMTc4IC01OS45MzQsLTQwLjggLTk4LjE0LC00MC44Wm0yOTIuMDc4LDIzOC4yNjNjMCwzMy40NTMgMjUuMzM3LDU2Ljg3OCA1Ni44NCw1Ni44MzdjNDQuMTg4LC0wLjA1OSA5MC40OTQsLTM5LjQgOTAuNDk0LC0xNDAuNDY4YzAsLTExOS43NiAtODMuNzUzLC0xNTQuMTA0IC0xMzguOTI1LC0xNTQuNjI1Yy0zOS43MDMsLTAuMzc5IC03NS4zMTksMTUuNjE1IC0xMDAuNTAzLDQwLjc5M2MtMjUuMjA5LDI1LjIxNiAtNDAuOCw1OS45MzggLTQwLjgsOTguMDk0bDAsMTQ1LjQ0MWMwLjI4NCw3Ni41MzEgNDUuNDU5LDEzOC40OSAxMzguOTI1LDEzOC41OTNsMTEuNTY2LDBjMzEuNDA5LC0wLjAyOCA1Ni43ODcsLTI1LjQ0IDU2Ljg0LC01Ni44MDZjMCwtMzAuNDYyIC0yNS4xMzEsLTUxLjU4MSAtNTQuMTk3LC01MS43OTFsLTE0LjQ1NiwwLjEwMWMtMTMuMzg0LC0wLjAxMyAtMjIuODY5LC03Ljk4NSAtMjIuODY5LC0xOC4zMjVsMCwtMTUyLjM2NmMwLjAxNiwtMTQuNTUzIDEwLjc0NCwtMjYuNTIyIDI0LjMwNywtMjYuNTU5YzEzLjUzNCwwLjAzNyAyNC4yNzIsMTIuMDA2IDI0LjI3MiwyNi41NTlsMCw0Ny41MzFjMCwwIC0zMS40OTQsMTMuNTM4IC0zMS40OTQsNDYuOTkxWm0tNDUzLjYzMiwtOTkuNjZsMCwyMjguMDI1bC0wLjA0LDBjMCwzMS4wNzIgLTI1LjIzNSw1Ni4zIC01Ni4zMzQsNTYuM2MtMTEuNjY2LDAgLTIyLjkwMSwtMy41MzQgLTMyLjQzOCwtOS41OTNjLTE2LjE4MSw2LjMxMiAtMzMuODY5LDkuODA5IC01Mi40ODQsOS41OTNjLTU1LjIwNCwtMC41MjEgLTEzOC45NzUsLTM0LjgzMSAtMTM4Ljk3NSwtMTU0LjYzMWMwLC0xMDEuMDY5IDQ2LjI5NywtMTQwLjM5NyA5MC41MTIsLTE0MC40NTNjMzEuNTAzLC0wLjA0NyA1Ni44NSwyMy4zNzggNTYuODUsNTYuODMxYzAsMzMuNDc1IC0zMS40NzgsNDYuOTk3IC0zMS40NzgsNDYuOTk3bC0wLjA1Myw0Ny41MWMwLjA1MywxNC41NTkgMTAuNzc4LDI2LjU0IDI0LjMwMywyNi41NjhjMTMuNDUsLTAuMDI4IDI0LjA5NywtMTEuODI4IDI0LjI4NCwtMjYuMjE4bDAuMDEzLC0xNTIuNzE2YzAsLTEwLjMzNSAtOS41MDMsLTE4LjI3OCAtMjIuODc4LC0xOC4yOTFsLTE0LjQyNSwwLjExM2MtMjkuMDc4LC0wLjIyMiAtNTQuMjMxLC0yMS4zODEgLTU0LjIzMSwtNTEuODEzYzAuMDcxLC0zMS4zOTcgMjUuNDU5LC01Ni43ODcgNTYuODQsLTU2LjgyNWwxMS41OTQsMGM5My40NTMsMC4xMTkgMTM4LjU4MSw2Mi4wNTcgMTM4Ljk0LDEzOC42MDNaIiBzdHlsZT0iZmlsbDojZmZmO2ZpbGwtcnVsZTpub256ZXJvOyIvPjxwYXRoIGQ9Ik04MjkuMDkxLDU1Ny4yNTNsMjkuMTE1LDBsLTQxLjA3NSwxMTguNDg4bC0yMS45NjUsMGwzMC41NTYsLTg4LjI2Yy0xOC45NzUsMjMuNjQxIC00Mi4yODgsNTQuMDk0IC01OS44MzgsNzcuMzY5bC0xNy41MzQsMGMtMS4xMTksLTIzLjI3NSAtMi41MjgsLTU0LjU4NyAtNC45MDYsLTc3LjM2OWwtMzAuNTUzLDg4LjI2bC0yMS41NzIsMGw0MS4xMDMsLTExOC40ODhsMzAuNTc1LDBjMy4xNzIsMjMuMTI4IDUuNzA5LDUxLjE0MSA2Ljk2Niw3NS43OTRjMTcuOTQzLC0yNC44IDQwLjExMiwtNTMuMDI1IDU5LjEyOCwtNzUuNzk0WiIgc3R5bGU9ImZpbGw6IzAwMzM2ODtmaWxsLXJ1bGU6bm9uemVybzsiLz48cGF0aCBkPSJNOTQyLjk0NCw2MTUuNzM0YzEyLjMwOSwtMzUuODkzIDcuNzY4LC00MS4xNTkgLTE4LjI0NywtNDEuMTU5Yy0yNS45OTcsMCAtMzQuMzQxLDUuMjY2IC00Ni42NjMsNDEuMTU5Yy0xMi40NSwzNS42NzggLTguMjA2LDQyLjE0NyAxNy43OTEsNDIuMTQ3YzI1Ljk5NywwIDM0LjY4NCwtNi40NjkgNDcuMTE5LC00Mi4xNDdabTIzLjg2OSwtMC4zNDdjLTE2Ljk1NCw0OC45MzIgLTQwLjM4Miw2Mi43MzggLTc3Ljk2LDYyLjczOGMtMzcuNzM3LDAgLTUxLjY4NywtMTMuODA2IC0zNC43NCwtNjIuNzM4YzE2LjY3MSwtNDguMTAzIDQwLjAxOCwtNjEuMDI4IDc3LjU0OSwtNjEuMDI4YzM3LjU4MiwwIDUxLjgwNywxMi45MjUgMzUuMTUxLDYxLjAyOFoiIHN0eWxlPSJmaWxsOiMwMDMzNjg7ZmlsbC1ydWxlOm5vbnplcm87Ii8+PHBhdGggZD0iTTEwMDkuMzMsNjA0LjUxNmwzNi4zNjksMGM3LjQ4NCwwIDExLjk3MiwtNS40NTMgMTUuMDEzLC0xNC4zMTNjMy4zMjEsLTkuNSAyLjM4MSwtMTMuODk0IC01LjI4NSwtMTMuODk0bC0zNi4zNjIsMGwtOS43MzUsMjguMjA3Wm0xOS4xMzIsNTIuMzI4YzguMTY4LDAgMTMuNTU5LC01LjkzOCAxNy4yMDksLTE2LjY1N2MzLjg3MiwtMTEuMjA5IDIuMTc1LC0xNy40NzggLTUuOTc1LC0xNy40NzhsLTM2LjczMSwwbC0xMS44ODIsMzQuMTM1bDM3LjM3OSwwWm00MC4yNTksLTEzLjU4MmMtOC4wODgsMjMuMjg4IC0yMi43MSwzMi40NzkgLTQxLjc2LDMyLjQ3OWwtNjQuNzg3LDBsNDEuMTI1LC0xMTguNDg4bDYzLjcyOCwwYzIzLjYwMywwIDI1LjE3MiwxMS4wNTMgMTkuMTA5LDI4LjQwNmMtNS4zMjgsMTUuNjE5IC0xMi4yNzUsMjUuNDYzIC0zNC4xMTIsMjcuMzM1YzIyLjMyNSwxLjAzNyAyMi44MDksMTIuNTk3IDE2LjY5NywzMC4yNjhaIiBzdHlsZT0iZmlsbDojMDAzMzY4O2ZpbGwtcnVsZTpub256ZXJvOyIvPjxwYXRoIGQ9Ik0xMTM4LjY3LDU1Ny4yNTNsLTQxLjA3OCwxMTguNDg4bC0yMi40MzgsMGw0MS4wNzIsLTExOC40ODhsMjIuNDQ0LDBaIiBzdHlsZT0iZmlsbDojMDAzMzY4O2ZpbGwtcnVsZTpub256ZXJvOyIvPjxwYXRoIGQ9Ik0xMTgyLjM2LDU1Ny4yNTNsLTM0LjM2OSw5OC45MjhsNTUuOTE2LDBsLTYuNzM3LDE5LjU2bC03OC4zMzgsMGw0MS4wODgsLTExOC40ODhsMjIuNDQsMFoiIHN0eWxlPSJmaWxsOiMwMDMzNjg7ZmlsbC1ydWxlOm5vbnplcm87Ii8+PHBhdGggZD0iTTEzMjguMTYsNTU3LjI1M2wtNi44NjIsMTkuMzg4bC02My41NTMsMGwtOS40ODgsMjcuMzUzbDQ1LjQsMGwtNi42NCwxOS4yMDZsLTQ1LjM4NSwwbC0xMS40NjUsMzMuMTYybDYzLjU5LDBsLTYuNjcyLDE5LjM3OWwtODYuMDA5LDBsNDEuMDc1LC0xMTguNDg4bDg2LjAwOSwwWiIgc3R5bGU9ImZpbGw6IzAwMzM2ODtmaWxsLXJ1bGU6bm9uemVybzsiLz48L3N2Zz4=" alt="APE Mobile Logo">
+      <img
+        class="apeLogo"
+        height="40px"
+        src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+PCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj48c3ZnIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHZpZXdCb3g9IjAgMCAxMzIwIDY3NSIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4bWw6c3BhY2U9InByZXNlcnZlIiBzdHlsZT0iZmlsbC1ydWxlOmV2ZW5vZGQ7Y2xpcC1ydWxlOmV2ZW5vZGQ7c3Ryb2tlLWxpbmVqb2luOnJvdW5kO3N0cm9rZS1taXRlcmxpbWl0OjEuNDE0MjE7Ij48cGF0aCBkPSJNNjgxLjkxLDU2OS43NTljOC4yODcsLTI0Ljc2MiAzNi40NTYsLTQ0Ljk5NyA2Mi41NjUsLTQ0Ljk5N2w0MjMuNTA3LDBsMTQ2LjMwOSwtNDE5LjE4NGMyMC4yODEsLTU4LjA3OCAtMTMuNDYyLC0xMDUuNTc4IC03NC45NSwtMTA1LjU3OGwtOTIyLjY2OSwwYy02MS41MDMsMCAtMTI4LjQwNiw0Ny41IC0xNDguNjc4LDEwNS41NzhsLTE2Mi4xMDYsNDY0LjQzNGMtMjAuMjYsNTguMDg1IDEzLjQ3MiwxMDUuNTc1IDc0Ljk2NSwxMDUuNTc1bDU2NS41NDQsMGwzNS41MTMsLTEwNS44MjhaIiBzdHlsZT0iZmlsbDojMDAzMzY4O2ZpbGwtcnVsZTpub256ZXJvOyIvPjxwYXRoIGQ9Ik02MzkuMDE2LDcwLjEwNmwtMi4zNiwwYy0zOC4yLDAgLTcyLjkyOCwxNS42MjIgLTk4LjExNSw0MC44Yy0yNS4yLDI1LjE4NSAtNDAuODE5LDU5LjkxOSAtNDAuODE5LDk4LjA5NGwwLDEwOC4yOTdjMCwzMS4xMzcgMjguMzMxLDU2LjM3NSA1OS40NSw1Ni4zNzVjMzEuMTE5LDAgNTYuMzI1LC0yNS4yMzggNTYuMzI1LC01Ni4zNzVsMC4wNDQsMGwwLC0xMDMuNDY2YzAuMDE1LC0xNC41MzcgMTAuNzcxLC0yNi41MTggMjQuMjk3LC0yNi41NDNjMTMuNTQzLDAuMDI1IDI0LjI2NSwxMi4wMDYgMjQuMjk2LDI2LjU0M2wwLDE1Mi4zODJjMCwxMy41NDMgLTkuODYyLDE3Ljc0OSAtMjQuNDUsMTcuNzQ5bC0zNS4wNDcsMGMtNDYuNTE4LDAuMDgyIC0xMDQuOTI4LDMxLjY2IC0xMDQuOTUzLDEwNy42NDFsMCw2Ni4zMTZjMCwzMS4xMDMgMjguMzY5LDU2LjMyOCA1OS40ODgsNTYuMzI4YzMxLjExOSwwIDU2LjMyNSwtMjUuMjI1IDU2LjMyNSwtNTYuMzI4bDAuMDQ0LDBjMCwwIDAsLTEzLjQwMyAwLC0zOS4yMzVjMCwtMjUuOTAzIDI2LjYxMiwtMjUuNjUgNDUuMjM3LC0yNS42NWM0Ny41MjgsMCA3Ny41ODEsLTE4LjUyMSA5NS40MDYsLTQ0LjE3MWMxNy44MSwtMjUuNjM1IDIzLjc4NSwtNTQuMjU3IDIzLjczNSwtNjQuNzI5bDAuMDUsLTE3NS4xMzRjMCwtMzguMTc1IC0xNS42NTYsLTcyLjkwOSAtNDAuODEzLC05OC4wOTRjLTI1LjIwMywtMjUuMTc4IC01OS45MzQsLTQwLjggLTk4LjE0LC00MC44Wm0yOTIuMDc4LDIzOC4yNjNjMCwzMy40NTMgMjUuMzM3LDU2Ljg3OCA1Ni44NCw1Ni44MzdjNDQuMTg4LC0wLjA1OSA5MC40OTQsLTM5LjQgOTAuNDk0LC0xNDAuNDY4YzAsLTExOS43NiAtODMuNzUzLC0xNTQuMTA0IC0xMzguOTI1LC0xNTQuNjI1Yy0zOS43MDMsLTAuMzc5IC03NS4zMTksMTUuNjE1IC0xMDAuNTAzLDQwLjc5M2MtMjUuMjA5LDI1LjIxNiAtNDAuOCw1OS45MzggLTQwLjgsOTguMDk0bDAsMTQ1LjQ0MWMwLjI4NCw3Ni41MzEgNDUuNDU5LDEzOC40OSAxMzguOTI1LDEzOC41OTNsMTEuNTY2LDBjMzEuNDA5LC0wLjAyOCA1Ni43ODcsLTI1LjQ0IDU2Ljg0LC01Ni44MDZjMCwtMzAuNDYyIC0yNS4xMzEsLTUxLjU4MSAtNTQuMTk3LC01MS43OTFsLTE0LjQ1NiwwLjEwMWMtMTMuMzg0LC0wLjAxMyAtMjIuODY5LC03Ljk4NSAtMjIuODY5LC0xOC4zMjVsMCwtMTUyLjM2NmMwLjAxNiwtMTQuNTUzIDEwLjc0NCwtMjYuNTIyIDI0LjMwNywtMjYuNTU5YzEzLjUzNCwwLjAzNyAyNC4yNzIsMTIuMDA2IDI0LjI3MiwyNi41NTlsMCw0Ny41MzFjMCwwIC0zMS40OTQsMTMuNTM4IC0zMS40OTQsNDYuOTkxWm0tNDUzLjYzMiwtOTkuNjZsMCwyMjguMDI1bC0wLjA0LDBjMCwzMS4wNzIgLTI1LjIzNSw1Ni4zIC01Ni4zMzQsNTYuM2MtMTEuNjY2LDAgLTIyLjkwMSwtMy41MzQgLTMyLjQzOCwtOS41OTNjLTE2LjE4MSw2LjMxMiAtMzMuODY5LDkuODA5IC01Mi40ODQsOS41OTNjLTU1LjIwNCwtMC41MjEgLTEzOC45NzUsLTM0LjgzMSAtMTM4Ljk3NSwtMTU0LjYzMWMwLC0xMDEuMDY5IDQ2LjI5NywtMTQwLjM5NyA5MC41MTIsLTE0MC40NTNjMzEuNTAzLC0wLjA0NyA1Ni44NSwyMy4zNzggNTYuODUsNTYuODMxYzAsMzMuNDc1IC0zMS40NzgsNDYuOTk3IC0zMS40NzgsNDYuOTk3bC0wLjA1Myw0Ny41MWMwLjA1MywxNC41NTkgMTAuNzc4LDI2LjU0IDI0LjMwMywyNi41NjhjMTMuNDUsLTAuMDI4IDI0LjA5NywtMTEuODI4IDI0LjI4NCwtMjYuMjE4bDAuMDEzLC0xNTIuNzE2YzAsLTEwLjMzNSAtOS41MDMsLTE4LjI3OCAtMjIuODc4LC0xOC4yOTFsLTE0LjQyNSwwLjExM2MtMjkuMDc4LC0wLjIyMiAtNTQuMjMxLC0yMS4zODEgLTU0LjIzMSwtNTEuODEzYzAuMDcxLC0zMS4zOTcgMjUuNDU5LC01Ni43ODcgNTYuODQsLTU2LjgyNWwxMS41OTQsMGM5My40NTMsMC4xMTkgMTM4LjU4MSw2Mi4wNTcgMTM4Ljk0LDEzOC42MDNaIiBzdHlsZT0iZmlsbDojZmZmO2ZpbGwtcnVsZTpub256ZXJvOyIvPjxwYXRoIGQ9Ik04MjkuMDkxLDU1Ny4yNTNsMjkuMTE1LDBsLTQxLjA3NSwxMTguNDg4bC0yMS45NjUsMGwzMC41NTYsLTg4LjI2Yy0xOC45NzUsMjMuNjQxIC00Mi4yODgsNTQuMDk0IC01OS44MzgsNzcuMzY5bC0xNy41MzQsMGMtMS4xMTksLTIzLjI3NSAtMi41MjgsLTU0LjU4NyAtNC45MDYsLTc3LjM2OWwtMzAuNTUzLDg4LjI2bC0yMS41NzIsMGw0MS4xMDMsLTExOC40ODhsMzAuNTc1LDBjMy4xNzIsMjMuMTI4IDUuNzA5LDUxLjE0MSA2Ljk2Niw3NS43OTRjMTcuOTQzLC0yNC44IDQwLjExMiwtNTMuMDI1IDU5LjEyOCwtNzUuNzk0WiIgc3R5bGU9ImZpbGw6IzAwMzM2ODtmaWxsLXJ1bGU6bm9uemVybzsiLz48cGF0aCBkPSJNOTQyLjk0NCw2MTUuNzM0YzEyLjMwOSwtMzUuODkzIDcuNzY4LC00MS4xNTkgLTE4LjI0NywtNDEuMTU5Yy0yNS45OTcsMCAtMzQuMzQxLDUuMjY2IC00Ni42NjMsNDEuMTU5Yy0xMi40NSwzNS42NzggLTguMjA2LDQyLjE0NyAxNy43OTEsNDIuMTQ3YzI1Ljk5NywwIDM0LjY4NCwtNi40NjkgNDcuMTE5LC00Mi4xNDdabTIzLjg2OSwtMC4zNDdjLTE2Ljk1NCw0OC45MzIgLTQwLjM4Miw2Mi43MzggLTc3Ljk2LDYyLjczOGMtMzcuNzM3LDAgLTUxLjY4NywtMTMuODA2IC0zNC43NCwtNjIuNzM4YzE2LjY3MSwtNDguMTAzIDQwLjAxOCwtNjEuMDI4IDc3LjU0OSwtNjEuMDI4YzM3LjU4MiwwIDUxLjgwNywxMi45MjUgMzUuMTUxLDYxLjAyOFoiIHN0eWxlPSJmaWxsOiMwMDMzNjg7ZmlsbC1ydWxlOm5vbnplcm87Ii8+PHBhdGggZD0iTTEwMDkuMzMsNjA0LjUxNmwzNi4zNjksMGM3LjQ4NCwwIDExLjk3MiwtNS40NTMgMTUuMDEzLC0xNC4zMTNjMy4zMjEsLTkuNSAyLjM4MSwtMTMuODk0IC01LjI4NSwtMTMuODk0bC0zNi4zNjIsMGwtOS43MzUsMjguMjA3Wm0xOS4xMzIsNTIuMzI4YzguMTY4LDAgMTMuNTU5LC01LjkzOCAxNy4yMDksLTE2LjY1N2MzLjg3MiwtMTEuMjA5IDIuMTc1LC0xNy40NzggLTUuOTc1LC0xNy40NzhsLTM2LjczMSwwbC0xMS44ODIsMzQuMTM1bDM3LjM3OSwwWm00MC4yNTksLTEzLjU4MmMtOC4wODgsMjMuMjg4IC0yMi43MSwzMi40NzkgLTQxLjc2LDMyLjQ3OWwtNjQuNzg3LDBsNDEuMTI1LC0xMTguNDg4bDYzLjcyOCwwYzIzLjYwMywwIDI1LjE3MiwxMS4wNTMgMTkuMTA5LDI4LjQwNmMtNS4zMjgsMTUuNjE5IC0xMi4yNzUsMjUuNDYzIC0zNC4xMTIsMjcuMzM1YzIyLjMyNSwxLjAzNyAyMi44MDksMTIuNTk3IDE2LjY5NywzMC4yNjhaIiBzdHlsZT0iZmlsbDojMDAzMzY4O2ZpbGwtcnVsZTpub256ZXJvOyIvPjxwYXRoIGQ9Ik0xMTM4LjY3LDU1Ny4yNTNsLTQxLjA3OCwxMTguNDg4bC0yMi40MzgsMGw0MS4wNzIsLTExOC40ODhsMjIuNDQ0LDBaIiBzdHlsZT0iZmlsbDojMDAzMzY4O2ZpbGwtcnVsZTpub256ZXJvOyIvPjxwYXRoIGQ9Ik0xMTgyLjM2LDU1Ny4yNTNsLTM0LjM2OSw5OC45MjhsNTUuOTE2LDBsLTYuNzM3LDE5LjU2bC03OC4zMzgsMGw0MS4wODgsLTExOC40ODhsMjIuNDQsMFoiIHN0eWxlPSJmaWxsOiMwMDMzNjg7ZmlsbC1ydWxlOm5vbnplcm87Ii8+PHBhdGggZD0iTTEzMjguMTYsNTU3LjI1M2wtNi44NjIsMTkuMzg4bC02My41NTMsMGwtOS40ODgsMjcuMzUzbDQ1LjQsMGwtNi42NCwxOS4yMDZsLTQ1LjM4NSwwbC0xMS40NjUsMzMuMTYybDYzLjU5LDBsLTYuNjcyLDE5LjM3OWwtODYuMDA5LDBsNDEuMDc1LC0xMTguNDg4bDg2LjAwOSwwWiIgc3R5bGU9ImZpbGw6IzAwMzM2ODtmaWxsLXJ1bGU6bm9uemVybzsiLz48L3N2Zz4="
+        alt="APE Mobile Logo"
+      />
     </div>
     <div id="gradientLine"></div>
     <div id="mainArea">
-        <header>
-            <span id="title">
-                <h1 class="titleText">Get APE Mobile Info</h1>
-                <a href="./doc/Doco.html">
-                <svg class="helpIcon" focusable="false" viewBox="0 0 24 24" aria-hidden="true" width = "23px" height = "23px"
-            role="presentation" fill="#ccc"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z">
-                </path></svg></a>
-            </span>
-            <span id="author">
-                By Andrew Greenhill
-            </span>
-            <em><p id='versionDisplay'></p></em>
-        </header>
-        <main>
-            <p class='hidden'><em>Placeholder</em> for explanation and instructions...</p>
-            <!-- <form style="padding: 0; margin: 0px;" action="" method="post"> -->
-                <label for="siteName" class="label81">Site Name</label>
-                <input id="siteName" name="siteName" type="text" class="field81" required/>
-                <!-- <p>
+      <header>
+        <span id="title">
+          <h1 class="titleText">Get APE Mobile Info</h1>
+          <a href="./doc/Doco.html">
+            <svg
+              class="helpIcon"
+              focusable="false"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              width="23px"
+              height="23px"
+              role="presentation"
+              fill="#ccc"
+            >
+              <path
+                d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"
+              ></path></svg
+          ></a>
+        </span>
+        <span id="author">
+          By Andrew Greenhill
+        </span>
+        <em><p id="versionDisplay"></p></em>
+      </header>
+      <main>
+        <p class="hidden"><em>Placeholder</em> for explanation and instructions...</p>
+        <!-- <form style="padding: 0; margin: 0px;" action="" method="post"> -->
+        <label for="siteName" class="label81">Site Name</label>
+        <input id="siteName" name="siteName" type="text" class="field81" required />
+        <!-- <p>
                 <label for="emailAddress">Email address</label>
                 <input id="emailAddress" name="emailAddress" type="text" required/> -->
-                <p>
-                <label for="siteKey" class="label81">Site Key</label>
-                <input id="siteKey" name="siteKey" type="text" class="field81" required/>
-                <p>
-                <label for="infoType" class="label81">Get list of</label>
-                <select name="infoType" id="infoType" class="field81list" required>
-                    <option value=""></option>
-                </select>
-                <!-- <input type="submit" value="Submit"> -->
-            <!-- </form> -->
+        <p>
+          <label for="siteKey" class="label81">Site Key</label>
+          <input id="siteKey" name="siteKey" type="text" class="field81" required />
+        </p>
 
-            <div id='userOptions' class='optionsBox'>
-                <p class="optionsSubtitle">Users Options</p>
-                <label for="usersActive" class="label110">Active setting</label>
-                <select name="usersActive" id="usersActive" class="field110" required>
-                    <option value="true">Active</option>
-                    <option value="false">Inactive</option>
-                    <option value="all">Active or Inactive</option>
-                </select>
-            </div>
+        <p>
+          <label for="infoType" class="label81">Get list of</label>
+          <select name="infoType" id="infoType" class="field81list" required>
+            <option value=""></option>
+          </select>
+          <!-- <input type="submit" value="Submit"> -->
+          <!-- </form> -->
+        </p>
 
-            <div id='projectOptions' class='optionsBox'>
-                <p class="optionsSubtitle">Projects Options</p>
-                <label for="projectActive" class="label110">Active setting</label>
-                <select name="projectActive" id="projectActive" class="field110" required>
-                    <option value="true">Active</option>
-                    <option value="false">Inactive</option>
-                    <option value="all">Active or Inactive</option>
-                </select>
-            </div>
+        <div id="userOptions" class="optionsBox">
+          <p class="optionsSubtitle">Users Options</p>
+          <label for="usersActive" class="label110">Active setting</label>
+          <select name="usersActive" id="usersActive" class="field110" required>
+            <option value="true">Active</option>
+            <option value="false">Inactive</option>
+            <option value="all">Active or Inactive</option>
+          </select>
+        </div>
 
-            <div id='orgListOptions' class='optionsBox'>
-                <p class="optionsSubtitle">Org Lists Options</p>
-                No options apply to getting Org Lists.
-            </div>
-            
-            <div id='projLTOptions' class='optionsBox'>
-                <p class="optionsSubtitle">Proj List Types Options</p>
-                No options apply to getting Proj List Types.
-            </div>
+        <div id="projectOptions" class="optionsBox">
+          <p class="optionsSubtitle">Projects Options</p>
+          <label for="projectActive" class="label110">Active setting</label>
+          <select name="projectActive" id="projectActive" class="field110" required>
+            <option value="true">Active</option>
+            <option value="false">Inactive</option>
+            <option value="all">Active or Inactive</option>
+          </select>
+        </div>
 
-            <div id='projChildrenOptions' class='optionsBox'>
-                <p class="optionsSubtitle">Project Members/Lists/WBS Options</p>
-                <label for="selectedProj" class="label160">Project ID (optional)</label>
-                <input id="selectedProj" name="selectedProj" type="number" class="field160" min="1"/>
-            </div>
+        <div id="orgListOptions" class="optionsBox">
+          <p class="optionsSubtitle">Org Lists Options</p>
+          No options apply to getting Org Lists.
+        </div>
 
-            <div id='drawingOptions' class='optionsBox'>
-                <p class="optionsSubtitle">Drawings & Docs Options</p>
-                <label for="drawingProj" class="label160">Project ID (optional)</label>
-                <input id="drawingProj" name="drawingProj" type="number" class="field160" min="1"/>
-            </div>
+        <div id="projLTOptions" class="optionsBox">
+          <p class="optionsSubtitle">Proj List Types Options</p>
+          No options apply to getting Proj List Types.
+        </div>
 
-            <div id='templateOptions' class='optionsBox'>
-                <p class="optionsSubtitle">Templates Options</p>
-                <label for="templateType1" class="label132">Template type</label>
-                <select name="templateType1" id="templateType1" class="field132" required>
-                    <option value="All">All</option>
-                    <option value="5">Form</option>
-                    <option value="4">Action</option>
-                    <option value="1">Memo: General</option>
-                    <option value="2">Memo: Issue</option>
-                    <option value="3">Memo: RFI</option>
-                </select>
-                <p></p>
-                <label for="templateType2" class="label132">Draft/Published</label>
-                <select name="templateType2" id="templateType2" class="field132" required>
-                    <option value="draft">Draft (recommended)</option>
-                    <option value="published">Published</option>
-                    <option value="archived">Archived</option>
-                    <option value="draft|archived|published">All</option>
-                </select>
-                <p></p>  
-                <label for="include_inactive" class="label132check">Include inactive</label>          
-                <input type="checkbox" name="include_inactive" id="include_inactive" value=true>
-                <br>
-            </div>
+        <div id="projChildrenOptions" class="optionsBox">
+          <p class="optionsSubtitle">Project Members/Lists/WBS Options</p>
+          <label for="selectedProj" class="label160">Project ID (optional)</label>
+          <input id="selectedProj" name="selectedProj" type="number" class="field160" min="1" />
+        </div>
 
-            <div id='formOptions' class='optionsBox'>
-                <p class="optionsSubtitle">Forms Options</p>
-                <label for="formStatus" class="label105">Status</label>
-                <select name="formStatus" id="formStatus" class="field105list">
-                    <option value="">All</option>
-                    <option value="draft">Draft</option>
-                    <option value="open">Open</option>
-                    <option value="closed">Closed</option>
-                </select>
-                <p></p>
-                <label for="formProj" class="label105">Project ID</label>
-                <input id="formProj" name="formProj" type="number" class="field105" min="1"/>
-                <p></p>
-                <label for="formDraftTemID" class="label140">Draft Template ID</label>
-                <input id="formDraftTemID" name="formDraftTemID" type="number" class="field140" min="1"/>
-                <p></p>
-                <label for="formPublishTemID" class="label105">Template ID</label>
-                <input id="formPublishTemID" name="formPublishTemID" type="number" class="field105" min="1"/>
-                <p></p>
-                <label for="formLimit" class="label105">Limit</label>
-                <input id="formLimit" name="formLimit" type="number" class="field105" min="1"/>
-                <br>
-            </div>
+        <div id="drawingOptions" class="optionsBox">
+          <p class="optionsSubtitle">Drawings & Docs Options</p>
+          <label for="drawingProj" class="label160">Project ID (optional)</label>
+          <input id="drawingProj" name="drawingProj" type="number" class="field160" min="1" />
+        </div>
 
-            <div id='actionOptions' class='optionsBox'>
-                <p class="optionsSubtitle">Actions Options</p>
-                Options for Actions have not yet been added. If you'd like them then please send a feature request to support@apemobile.com including:
-                <ul>
-                    <li>What is the situation you need it for?</li>
-                    <li>How important is that for you & why?</li>
-                    <li>Which options would you like? A natural set of options would be like those for forms but with different status items.</li>
-                </ul>
-            </div>
+        <div id="templateOptions" class="optionsBox">
+          <p class="optionsSubtitle">Templates Options</p>
+          <label for="templateType1" class="label132">Template type</label>
+          <select name="templateType1" id="templateType1" class="field132" required>
+            <option value="All">All</option>
+            <option value="5">Form</option>
+            <option value="4">Action</option>
+            <option value="1">Memo: General</option>
+            <option value="2">Memo: Issue</option>
+            <option value="3">Memo: RFI</option>
+          </select>
+          <p></p>
+          <label for="templateType2" class="label132">Draft/Published</label>
+          <select name="templateType2" id="templateType2" class="field132" required>
+            <option value="draft">Draft (recommended)</option>
+            <option value="published">Published</option>
+            <option value="archived">Archived</option>
+            <option value="draft|archived|published">All</option>
+          </select>
+          <p></p>
+          <label for="include_inactive" class="label132check">Include inactive</label>
+          <input type="checkbox" name="include_inactive" id="include_inactive" value="true" />
+          <br />
+        </div>
 
-            <div id='memoOptions' class='optionsBox'>
-                <p class="optionsSubtitle">Memos Options</p>
-                Options for Memos have not yet been added. If you'd like them then please send a feature request to support@apemobile.com including:
-                <ul>
-                    <li>What is the situation you need it for?</li>
-                    <li>How important is that for you & why?</li>
-                    <li>Which options would you like? A natural set of options would be like those for forms but with additional status items.</li>
-                </ul>
-            </div>
+        <div id="formOptions" class="optionsBox">
+          <p class="optionsSubtitle">Forms Options</p>
+          <label for="formStatus" class="label105">Status</label>
+          <select name="formStatus" id="formStatus" class="field105list">
+            <option value="">All</option>
+            <option value="draft">Draft</option>
+            <option value="open">Open</option>
+            <option value="closed">Closed</option>
+          </select>
+          <p></p>
+          <label for="formProj" class="label105">Project ID</label>
+          <input id="formProj" name="formProj" type="number" class="field105" min="1" />
+          <p></p>
+          <label for="formDraftTemID" class="label140">Draft Template ID</label>
+          <input id="formDraftTemID" name="formDraftTemID" type="number" class="field140" min="1" />
+          <p></p>
+          <label for="formPublishTemID" class="label105">Template ID</label>
+          <input id="formPublishTemID" name="formPublishTemID" type="number" class="field105" min="1" />
+          <p></p>
+          <label for="formLimit" class="label105">Limit</label>
+          <input id="formLimit" name="formLimit" type="number" class="field105" min="1" />
+          <br />
+        </div>
 
-            <div id='punchListsOptions' class='optionsBox'>
-                <p class="optionsSubtitle">Punch Lists Options</p>
-                Options for Punch Lists have not yet been added. If you'd like them then please send a feature request to support@apemobile.com including:
-                <ul>
-                    <li>What is the situation you need it for?</li>
-                    <li>How important is that for you & why?</li>
-                    <li>Which options would you like?</li>
-                </ul>
-            </div>
+        <div id="actionOptions" class="optionsBox">
+          <p class="optionsSubtitle">Actions Options</p>
+          Options for Actions have not yet been added. If you'd like them then please send a feature request to
+          support@apemobile.com including:
+          <ul>
+            <li>What is the situation you need it for?</li>
+            <li>How important is that for you & why?</li>
+            <li>
+              Which options would you like? A natural set of options would be like those for forms but with different
+              status items.
+            </li>
+          </ul>
+        </div>
 
-            <p></p>
-            <button id='butn_GI' class='butnStyle' style="display: block;">Get list</button>
-            <p id='giErrorText'></p>
-            <p id='resultSummaryText' class='hidden'></p>
-            <button id='butn_stop' class='butnStyle' style="display: none;">Stop</button>
-            <button id='butn_DF' class='butnStyle' style="display: none;">Download</button>
-            <!-- <label id="fileNameLabel"  for="fileName" style="display: none; margin-right: 9px;">File Name</label> -->
-            <input id="fileName" name="fileName" type="text" style="display: none; width: 260px;"/>
-            <div id='pdfViewer' class='hidden'>
-                <p></p>
-                <button id='butn_pdf' class='butnStyle'>Display a sample PDF</button>
-                <br>
-                <iframe id="viewer" class='viewerStyle' style="display: none"></iframe>
-            </div>
-        </main>
-    </div>    
-</body>
+        <div id="memoOptions" class="optionsBox">
+          <p class="optionsSubtitle">Memos Options</p>
+          Options for Memos have not yet been added. If you'd like them then please send a feature request to
+          support@apemobile.com including:
+          <ul>
+            <li>What is the situation you need it for?</li>
+            <li>How important is that for you & why?</li>
+            <li>
+              Which options would you like? A natural set of options would be like those for forms but with additional
+              status items.
+            </li>
+          </ul>
+        </div>
+
+        <div id="punchListsOptions" class="optionsBox">
+          <p class="optionsSubtitle">Punch Lists Options</p>
+          Options for Punch Lists have not yet been added. If you'd like them then please send a feature request to
+          support@apemobile.com including:
+          <ul>
+            <li>What is the situation you need it for?</li>
+            <li>How important is that for you & why?</li>
+            <li>Which options would you like?</li>
+          </ul>
+        </div>
+
+        <p></p>
+        <button id="butn_GI" class="butnStyle" style="display: block;">Get list</button>
+        <p id="giErrorText"></p>
+        <p id="resultSummaryText" class="hidden"></p>
+        <button id="butn_stop" class="butnStyle" style="display: none;">Stop</button>
+        <button id="butn_DF" class="butnStyle" style="display: none;">Download</button>
+        <!-- <label id="fileNameLabel"  for="fileName" style="display: none; margin-right: 9px;">File Name</label> -->
+        <input id="fileName" name="fileName" type="text" style="display: none; width: 260px;" />
+        <div id="pdfViewer" class="hidden">
+          <p></p>
+          <button id="butn_pdf" class="butnStyle">Display a sample PDF</button>
+          <br />
+          <iframe id="viewer" class="viewerStyle" style="display: none;"></iframe>
+        </div>
+      </main>
+    </div>
+  </body>
 </html>
