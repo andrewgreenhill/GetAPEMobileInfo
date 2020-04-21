@@ -17,7 +17,7 @@ import { currentYYMMDD } from './lib/AG_date_functions.js';
 import { valueOfQueryStringParam } from './lib/AG_web_page_functions.js';
 const gami_version = '0.7.0, beta';
 
-var my_GAMI_NameSpace = function() {
+var my_GAMI_NameSpace = function () {
   //A function wrapper simply to create my own 'Get APE Mobile Info' name space
 
   var jsonResult = '';
@@ -88,7 +88,7 @@ var my_GAMI_NameSpace = function() {
   initialise_web_page(); //Set things up in the web page HTML:
   function initialise_web_page() {
     setElementTextDisplay('versionDisplay', 'Version ' + String(gami_version), 'block');
-    endpointOptions.forEach(optn => addOptionToSelectList('infoType', optn.text, optn.et));
+    endpointOptions.forEach((optn) => addOptionToSelectList('infoType', optn.text, optn.et));
     document.getElementById('butn_stop').onclick = stopAction;
     document.getElementById('butn_GI').onclick = getInfoHandler;
     document.getElementById('butn_DF').onclick = downloadAction;
@@ -256,7 +256,7 @@ var my_GAMI_NameSpace = function() {
             limit: document.getElementById('formLimit').value,
           };
           //Remove any endpoint parameters that have no value:
-          Object.keys(endpointParams).forEach(function(ky) {
+          Object.keys(endpointParams).forEach(function (ky) {
             if (!endpointParams[ky]) {
               delete endpointParams[ky];
             }
@@ -305,7 +305,7 @@ var my_GAMI_NameSpace = function() {
     }
 
     // Display summary info about what was obtained:
-    let infoTypeName = endpointOptions.find(x => x.et === entityType).name;
+    let infoTypeName = endpointOptions.find((x) => x.et === entityType).name;
     if (jsonResult.length !== 1) {
       infoTypeName = infoTypeName + 's';
     }
@@ -437,7 +437,7 @@ var my_GAMI_NameSpace = function() {
     return (
       removeEndOfString(siteName, '.') +
       '_' +
-      endpointOptions.find(x => x.et === entityType).filename +
+      endpointOptions.find((x) => x.et === entityType).filename +
       '_' +
       currentYYMMDD() +
       '.csv'
@@ -450,7 +450,7 @@ var my_GAMI_NameSpace = function() {
 
   function json2csvWithfieldMapper(jsonArray, columnHeadings, fieldMapper) {
     // Convert a JSON array to CSV, using a fieldMapper fn to affect the output
-    let csvArray = jsonArray.map(row => columnHeadings.map(fieldName => fieldMapper(fieldName, row)).join(','));
+    let csvArray = jsonArray.map((row) => columnHeadings.map((fieldName) => fieldMapper(fieldName, row)).join(','));
     csvArray.unshift(columnHeadings.join(','));
     return csvArray.join('\r\n');
   }
