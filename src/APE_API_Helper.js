@@ -30,7 +30,7 @@ function fetchWithTimeout(uri, options = {}, time = 20000) {
     //From https://stackoverflow.com/questions/30564053/how-can-i-synchronously-determine-a-javascript-promises-state
     const t = {};
     return Promise.race([p, t]).then(
-      v => (v === t ? 'pending' : 'fulfilled'),
+      (v) => (v === t ? 'pending' : 'fulfilled'),
       () => 'rejected'
     );
   }
@@ -39,7 +39,7 @@ function fetchWithTimeout(uri, options = {}, time = 20000) {
   // timeout is reached before the request is completed, it will be cancelled.
   // eslint-disable-next-line no-unused-vars
   const timeout = setTimeout(() => {
-    promiseState(result).then(state => {
+    promiseState(result).then((state) => {
       if (state === 'pending') {
         controller.abort();
       } else {
@@ -48,7 +48,7 @@ function fetchWithTimeout(uri, options = {}, time = 20000) {
     });
   }, time);
 
-  let result = fetch(uri, config).then(response => {
+  let result = fetch(uri, config).then((response) => {
     // Because _any_ response is considered a success to `fetch`,
     // we need to manually check that the response is in the 200 range.
     // This is typically how I handle that.
@@ -234,7 +234,7 @@ function error_ET_nyi(nameOfFunction, entityType) {
 export function convertObjectIntoParameterString(params) {
   if (typeof params === 'object') {
     let paramsString = Object.keys(params)
-      .map(key => key + '=' + params[key])
+      .map((key) => key + '=' + params[key])
       .join('&');
     if (paramsString.length > 0) {
       paramsString = '?' + paramsString;
@@ -251,7 +251,7 @@ function rateLimitFunctionCallsTo(aCheckFn, rLimit) {
   let lastCheckedX = {}; //This will store the date-time stamp of the last time aCheckFn(x) was called
   let lastFnValueX = {}; //This will store the result of the last time aCheckFn(x) was called
   let rateLimit = 1000 * parseInt(rLimit);
-  return function(x) {
+  return function (x) {
     let currentDateTime = new Date();
     if (!(currentDateTime - lastCheckedX[x] < rateLimit)) {
       lastFnValueX[x] = aCheckFn(x);
@@ -578,7 +578,7 @@ export async function aGet(
             useUrlParams = true;
           }
           break;
-        case gitHubType.User: //Example: https://api.github.com/users/Quoll42
+        case gitHubType.User: //Example: https://api.github.com/users/andrewgreenhill
           requestURL += entityType;
           pEntityId = entityId.toString();
           if (pEntityId) {
@@ -588,8 +588,8 @@ export async function aGet(
             useUrlParams = true; //Collection (and thus possibly parameters)
           }
           break;
-        case gitHubType.UserRepo: //Example: https://api.github.com/users/Quoll42/repos
-        case gitHubType.UserOrgs: //Example: https://api.github.com/users/Quoll42/orgs
+        case gitHubType.UserRepo: //Example: https://api.github.com/users/andrewgreenhill/repos
+        case gitHubType.UserOrgs: //Example: https://api.github.com/users/andrewgreenhill/orgs
           pEntityId = entityId.toString();
           requestURL += 'users/' + pEntityId + '/' + entityType.substring(5); //I'm using .substring(5) to strip off the "User_" prefix
           useUrlParams = true;
@@ -652,13 +652,13 @@ function cloneObject(obj) {
   return copy;
 }
 
-export var saveBlob = (function() {
+export var saveBlob = (function () {
   //Usage saveBlob(blobData, filename); From https://gist.github.com/philipstanislaus/c7de1f43b52531001412
 
   var a = document.createElement('a');
   document.body.appendChild(a);
   a.style = 'display: none';
-  return function(blob, fileName) {
+  return function (blob, fileName) {
     var url = window.URL.createObjectURL(blob);
     a.href = url;
     a.download = fileName;
