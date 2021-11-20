@@ -1,242 +1,242 @@
 #title {
-    width: 66%;
-    display: inline-block;
-    padding-top: 0px;
-    padding-bottom: 0px;
-    margin-top: 0px;
-    margin-bottom: 0px;
-    font-weight: normal;
+  width: 66%;
+  display: inline-block;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  font-weight: normal;
 }
 
 #author {
-    width: 31%;
-    display: inline-block;
-    text-align: right;
-    padding-top: 25px;
-    padding-bottom: 0px;
-    margin-top: 0px;
-    margin-bottom: 0px;
-    vertical-align: top;
+  width: 31%;
+  display: inline-block;
+  text-align: right;
+  padding-top: 25px;
+  padding-bottom: 0px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  vertical-align: top;
 }
 
 header {
-    margin-top: -10px;
-    padding-top: 0px;
+  margin-top: -10px;
+  padding-top: 0px;
 }
 
 body {
-    margin: 0px;
-    border: 0px;
-    padding: 0px;
+  margin: 0px;
+  border: 0px;
+  padding: 0px;
 }
 #sidebar {
-    height: 100%; /* Full-height*/
-    width: 57px; /* Width of the sidebar */
-    position: fixed; /* Fixed Sidebar (stay in place on scroll) */
-    z-index: 1; /* Stay on top */
-    top: 0; /* Stay at the top */
-    left: 0;
-    background: linear-gradient(180deg, #1E3751, #0D1B29);
-    overflow-x: hidden; /* Disable horizontal scroll */
-    padding-top: 20px;
-    margin: 0px;
-    border: 0px;
+  height: 100%; /* Full-height*/
+  width: 57px; /* Width of the sidebar */
+  position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+  z-index: 1; /* Stay on top */
+  top: 0; /* Stay at the top */
+  left: 0;
+  background: linear-gradient(180deg, #1e3751, #0d1b29);
+  overflow-x: hidden; /* Disable horizontal scroll */
+  padding-top: 20px;
+  margin: 0px;
+  border: 0px;
 }
 @media (max-width: 650px) {
-    #sidebar {
-      width: 48px;
-    }
-    #mainArea {
-      width: calc(100% - 88px);
-    }
+  #sidebar {
+    width: 48px;
   }
+  #mainArea {
+    width: calc(100% - 88px);
+  }
+}
 @media (max-width: 500px) {
-    #sidebar {
-      width: 38px;
-    }
-    #mainArea {
-      width: calc(100% - 78px);
-    }
+  #sidebar {
+    width: 38px;
   }
+  #mainArea {
+    width: calc(100% - 78px);
+  }
+}
 
 .apeLogo {
-    position: relative;
-    top: 4px;
-    left: 4px;
-    height: 40px;
+  position: relative;
+  top: 4px;
+  left: 4px;
+  height: 40px;
 }
 
 .helpIcon {
-    display: inline-block;
-    margin-left: 12px;
+  display: inline-block;
+  margin-left: 12px;
 }
 
 #topbar {
-    overflow: hidden;
-    background-color: white;
-    height: 49px;
-    width: calc(99% - 97px);
-    margin: 0px;
-    border: 0px;
-    position: relative;
-    padding-left: 20px;
-    padding-right: 20px;
-    padding-top: 8px;
-    padding-bottom: 8px;
-    left: 57px;
+  overflow: hidden;
+  background-color: white;
+  height: 49px;
+  width: calc(99% - 97px);
+  margin: 0px;
+  border: 0px;
+  position: relative;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  left: 57px;
 }
 #gradientLine {
-    width: 100%;
-    margin: 0px;
-    border: 0px;
-    height: 6px;
-    background: linear-gradient(0deg, white, #adadad);
+  width: 100%;
+  margin: 0px;
+  border: 0px;
+  height: 6px;
+  background: linear-gradient(0deg, white, #adadad);
 }
 #mainArea {
-    left: 57px;
-    width: calc(97% - 57px);
-    height: calc(100% - 96px);
-    background-color: white;
-    margin: 0px;
-    margin-left: 1%;
-    border: 0px;
-    padding-left: 1%;
-    padding-right: 1%;
-    padding-top: 15px;
-    padding-bottom: 10px;
-    position: absolute;
+  left: 57px;
+  width: calc(97% - 57px);
+  height: calc(100% - 96px);
+  background-color: white;
+  margin: 0px;
+  margin-left: 1%;
+  border: 0px;
+  padding-left: 1%;
+  padding-right: 1%;
+  padding-top: 15px;
+  padding-bottom: 10px;
+  position: absolute;
 }
 
 .butnStyle {
-    /* background-color: #7df37f; */
-    background: linear-gradient(0deg, #eee, #f8f8f8);
-    font-size: 0.9em;
+  /* background-color: #7df37f; */
+  background: linear-gradient(0deg, #eee, #f8f8f8);
+  font-size: 0.9em;
 }
 
 h1 {
-    margin-left: 0%;
-    font-size: 1.75em;
-    font-weight: normal;
+  margin-left: 0%;
+  font-size: 1.75em;
+  font-weight: normal;
 }
 
 .titleText {
-    display: inline-block;
-    margin-bottom: 0;
+  display: inline-block;
+  margin-bottom: 0;
 }
 
 #versionDisplay {
-    margin-left: 0%;
-    margin-top: 10px;
-    margin-bottom: 25px;
+  margin-left: 0%;
+  margin-top: 10px;
+  margin-bottom: 25px;
 }
 
 main {
-    margin-left: 0%;
-    /* background-color: #E9ECF0; */
+  margin-left: 0%;
+  /* background-color: #E9ECF0; */
 }
 
 .hidden {
-    display: none;
+  display: none;
 }
 
 .label81 {
-    float: left;
-    clear: left;
-    width: 81px;
-    padding-right: .5em;
+  float: left;
+  clear: left;
+  width: 81px;
+  padding-right: 0.5em;
 }
 .field81 {
-    width: 250px;
+  width: 250px;
 }
 .field81list {
-    width: 254px;
+  width: 254px;
 }
 
 .label105 {
-    float: left;
-    clear: left;
-    width: 105px;
-    padding-right: .5em;
+  float: left;
+  clear: left;
+  width: 105px;
+  padding-right: 0.5em;
 }
 .field105list {
-    width: 229px;
+  width: 229px;
 }
 .field105 {
-    width: 225px;
+  width: 225px;
 }
 
 .label110 {
-    float: left;
-    clear: left;
-    width: 110px;
-    padding-right: .5em;
+  float: left;
+  clear: left;
+  width: 110px;
+  padding-right: 0.5em;
 }
 .field110 {
-    width: 224px;
+  width: 224px;
 }
 
 .label132 {
-    float: left;
-    clear: left;
-    width: 132px;
-    padding-right: .5em;
+  float: left;
+  clear: left;
+  width: 132px;
+  padding-right: 0.5em;
 }
 .field132 {
-    width: 202px;
+  width: 202px;
 }
 .label132check {
-    float: left;
-    clear: left;
-    width: 128px;
-    padding-right: .5em;
+  float: left;
+  clear: left;
+  width: 128px;
+  padding-right: 0.5em;
 }
 
 .label140 {
-    float: left;
-    clear: left;
-    width: 140px;
-    padding-right: .5em;
+  float: left;
+  clear: left;
+  width: 140px;
+  padding-right: 0.5em;
 }
 .field140 {
-    width: 190px;
+  width: 190px;
 }
 
 .label160 {
-    float: left;
-    clear: left;
-    width: 160px;
-    padding-right: .5em;
+  float: left;
+  clear: left;
+  width: 160px;
+  padding-right: 0.5em;
 }
 .field160 {
-    width: 170px;
+  width: 170px;
 }
 
 #giErrorText {
-    display: none;
-    color: rgb(200, 19, 19)
+  display: none;
+  color: rgb(200, 19, 19);
 }
 
 .optionsBox {
-    margin-left: -5px;
-    padding-left: 5px;
-    padding-right: 2px;
-    padding-top: 2px;
-    padding-bottom: 8px;
-    border: 1px solid black;
-    border-radius: 7px;
-    max-width: 349px;
-    min-width: 230px;
-    display: none;
+  margin-left: -5px;
+  padding-left: 5px;
+  padding-right: 2px;
+  padding-top: 2px;
+  padding-bottom: 8px;
+  border: 1px solid black;
+  border-radius: 7px;
+  max-width: 349px;
+  min-width: 230px;
+  display: none;
 }
 
 .optionsSubtitle {
-    font-weight: bold;
-    margin-top: 2px;
-    margin-bottom: 10px;
+  font-weight: bold;
+  margin-top: 2px;
+  margin-bottom: 10px;
 }
 
 .viewerStyle {
-    width: 95%;
-    height: 1200px;
-    margin-top: 8px;
+  width: 95%;
+  height: 1200px;
+  margin-top: 8px;
 }
