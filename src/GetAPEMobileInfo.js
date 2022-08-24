@@ -9,7 +9,7 @@ An assistant for getting data from APE Mobile sites, including:
 
 By Andrew Greenhill.
 -----------------------------------------------------------------------------*/
-import { aGet, apeEntityType, aResponseError } from './APE_API_Helper.js';
+import { aGet, apeEntityType, aResponseError, saveBlob } from './APE_API_Helper.js';
 import { isApeMobileSite, ape_api_url_to_normal_url } from './lib/AG_APEMobile_functions.js';
 import { in_array_replace_A_with_B, in_array_after_A_insert_B } from './lib/AG_array_functions.js';
 import { removeStartOfString, removeEndOfString } from './lib/AG_string_functions.js';
@@ -108,13 +108,24 @@ var my_GAMI_NameSpace = function () {
     }
   }
 
-  function placeholder() {
+  async function placeholder() {
     document.getElementById('butn_downloadPDFs').disabled = true;
     for (var i = jsonResult.length - 1; i >= 0; i--) {
+      // Skip forms with draft status.
       if (jsonResult[i].status === 1 || jsonResult[i].status === 4) {
         const formID = jsonResult[i].id;
         console.log(`${formID}: ${jsonResult[i].short_description}`);
+        try {
+          let pdfBlob = await aGet(site1, apeEntityType.Form, formID, '', { outputTo: 'pdf' });
+          const filename = `${jsonResult[i].short_description}_${formID}.pdf`.replace(/[/\\?%*:|"<>]/g, '');
+          saveBlob(pdfBlob, filename);
+        } catch (error) {
+          console.error(`Error "${error.message}" when trying to get a PDF of form ${formID}`);
+        }
+
         // console.dir(jsonResult[i]);
+
+        // Async/await structure ?
       }
     }
     document.getElementById('butn_downloadPDFs').disabled = false;
