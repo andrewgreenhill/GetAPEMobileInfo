@@ -9,13 +9,13 @@ An assistant for getting data from APE Mobile sites, including:
 
 By Andrew Greenhill.
 -----------------------------------------------------------------------------*/
-import { aGet, apeEntityType, aResponseError } from './APE_API_Helper.js';
+import { aGet, apeEntityType, aResponseError, saveBlob } from './APE_API_Helper.js';
 import { isApeMobileSite, ape_api_url_to_normal_url } from './lib/AG_APEMobile_functions.js';
 import { in_array_replace_A_with_B, in_array_after_A_insert_B } from './lib/AG_array_functions.js';
 import { removeStartOfString, removeEndOfString } from './lib/AG_string_functions.js';
 import { currentYYMMDD } from './lib/AG_date_functions.js';
 import { valueOfQueryStringParam } from './lib/AG_web_page_functions.js';
-const gami_version = '0.7.3, beta';
+const gami_version = '0.8.0, beta';
 
 var my_GAMI_NameSpace = function () {
   //A function wrapper simply to create my own 'Get APE Mobile Info' name space
@@ -92,6 +92,7 @@ var my_GAMI_NameSpace = function () {
     document.getElementById('butn_stop').onclick = stopAction;
     document.getElementById('butn_GI').onclick = getInfoHandler;
     document.getElementById('butn_DF').onclick = downloadAction;
+    document.getElementById('butn_downloadPDFs').onclick = placeholder;
     document.getElementById('butn_pdf').onclick = display_a_PDF_Handler;
     document.getElementById('siteName').addEventListener('change', siteNameChanged);
     document.getElementById('infoType').addEventListener('change', displayEndpointParams);
@@ -105,6 +106,29 @@ var my_GAMI_NameSpace = function () {
     } else {
       site1.proxy = 'https://cors-anywhere-ag.herokuapp.com/'; //This proxy prevents blocking by browser SOP
     }
+  }
+
+  async function placeholder() {
+    document.getElementById('butn_downloadPDFs').disabled = true;
+    for (var i = jsonResult.length - 1; i >= 0; i--) {
+      // Skip forms with draft status.
+      if (jsonResult[i].status === 1 || jsonResult[i].status === 4) {
+        const formID = jsonResult[i].id;
+        console.log(`${formID}: ${jsonResult[i].short_description}`);
+        try {
+          let pdfBlob = await aGet(site1, apeEntityType.Form, formID, '', { outputTo: 'pdf' });
+          const filename = `${jsonResult[i].short_description}_${formID}.pdf`.replace(/[/\\?%*:|"<>]/g, '');
+          saveBlob(pdfBlob, filename);
+        } catch (error) {
+          console.error(`Error "${error.message}" when trying to get a PDF of form ${formID}`);
+        }
+
+        // console.dir(jsonResult[i]);
+
+        // Async/await structure ?
+      }
+    }
+    document.getElementById('butn_downloadPDFs').disabled = false;
   }
 
   function stopAction() {
@@ -572,6 +596,7 @@ var my_GAMI_NameSpace = function () {
   async function display_a_PDF_Handler() {
     // Disable button while display_a_PDF() is running, then display any resultant error
     document.getElementById('butn_pdf').disabled = true;
+
     let dapResult = await display_a_PDF();
     if (dapResult !== true) {
       setElementTextDisplay('giErrorText', dapResult, 'block');
