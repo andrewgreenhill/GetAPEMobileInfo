@@ -117,7 +117,8 @@ var my_GAMI_NameSpace = function () {
         console.log(`${formID}: ${jsonResult[i].short_description}`);
         try {
           let pdfBlob = await aGet(site1, apeEntityType.Form, formID, '', { outputTo: 'pdf' });
-          const filename = `${jsonResult[i].short_description}_${formID}.pdf`.replace(/[/\\?%*:|"<>]/g, '');
+          let filename = `${jsonResult[i].short_description}_${formID}.pdf`;
+          filename = filename.replace(/[/\\?%*:|"<>]/g, ''); //Remove illegal characters from the file name
           saveBlob(pdfBlob, filename);
         } catch (error) {
           console.error(`Error "${error.message}" when trying to get a PDF of form ${formID}`);
