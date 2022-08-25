@@ -92,7 +92,7 @@ var my_GAMI_NameSpace = function () {
     document.getElementById('butn_stop').onclick = stopAction;
     document.getElementById('butn_GI').onclick = getInfoHandler;
     document.getElementById('butn_DF').onclick = downloadAction;
-    document.getElementById('butn_downloadPDFs').onclick = placeholder;
+    document.getElementById('butn_downloadPDFs').onclick = downloadPDFs;
     document.getElementById('butn_pdf').onclick = display_a_PDF_Handler;
     document.getElementById('siteName').addEventListener('change', siteNameChanged);
     document.getElementById('infoType').addEventListener('change', displayEndpointParams);
@@ -108,20 +108,25 @@ var my_GAMI_NameSpace = function () {
     }
   }
 
-  async function placeholder() {
+  async function downloadPDFs() {
     document.getElementById('butn_downloadPDFs').disabled = true;
     for (var i = jsonResult.length - 1; i >= 0; i--) {
       // Skip forms with draft status.
       if (jsonResult[i].status === 1 || jsonResult[i].status === 4) {
         const formID = jsonResult[i].id;
-        console.log(`${formID}: ${jsonResult[i].short_description}`);
+        // console.log(`${formID}: ${jsonResult[i].short_description}`);
+        setElementTextDisplay(
+          'downloadProgressMsg',
+          `Downloading form ${formID}, ${jsonResult[i].short_description}`,
+          'block'
+        );
         try {
           let pdfBlob = await aGet(site1, apeEntityType.Form, formID, '', { outputTo: 'pdf' });
           let filename = `${jsonResult[i].short_description}_${formID}.pdf`;
           filename = filename.replace(/[/\\?%*:|"<>]/g, ''); //Remove illegal characters from the file name
           saveBlob(pdfBlob, filename);
         } catch (error) {
-          console.error(`Error "${error.message}" when trying to get a PDF of form ${formID}`);
+          console.error(`Error when trying to get a PDF of form ${formID}`);
         }
 
         // console.dir(jsonResult[i]);
@@ -129,6 +134,7 @@ var my_GAMI_NameSpace = function () {
         // Async/await structure ?
       }
     }
+    setElementTextDisplay('downloadProgressMsg', '', 'none');
     document.getElementById('butn_downloadPDFs').disabled = false;
   }
 
@@ -143,6 +149,7 @@ var my_GAMI_NameSpace = function () {
 
   function displayEndpointParams() {
     setElementTextDisplay('giErrorText', '', 'none');
+    setElementTextDisplay('downloadProgressMsg', '', 'none');
     let endpoint = document.getElementById('infoType').value;
     document.getElementById('userOptions').style.display = blockOrNone(endpoint === apeEntityType.User);
     document.getElementById('projectOptions').style.display = blockOrNone(endpoint === apeEntityType.Project);
