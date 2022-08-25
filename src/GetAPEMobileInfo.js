@@ -128,13 +128,9 @@ var my_GAMI_NameSpace = function () {
         } catch (error) {
           console.error(`Error when trying to get a PDF of form ${formID}`);
         }
-
-        // console.dir(jsonResult[i]);
-
-        // Async/await structure ?
       }
     }
-    setElementTextDisplay('downloadProgressMsg', 'Finished downloading', 'block');
+    // setElementTextDisplay('downloadProgressMsg', 'Finished downloading', 'block');
     alert('Finished downloading');
     setElementTextDisplay('downloadProgressMsg', '', 'none');
     document.getElementById('butn_downloadPDFs').disabled = false;
