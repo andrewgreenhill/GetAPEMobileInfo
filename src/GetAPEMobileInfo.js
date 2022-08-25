@@ -134,6 +134,8 @@ var my_GAMI_NameSpace = function () {
         // Async/await structure ?
       }
     }
+    setElementTextDisplay('downloadProgressMsg', 'Finished downloading', 'block');
+    alert('Finished downloading');
     setElementTextDisplay('downloadProgressMsg', '', 'none');
     document.getElementById('butn_downloadPDFs').disabled = false;
   }
