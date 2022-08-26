@@ -15,7 +15,7 @@ import { in_array_replace_A_with_B, in_array_after_A_insert_B } from './lib/AG_a
 import { removeStartOfString, removeEndOfString } from './lib/AG_string_functions.js';
 import { currentYYMMDD } from './lib/AG_date_functions.js';
 import { valueOfQueryStringParam } from './lib/AG_web_page_functions.js';
-const gami_version = '0.8.0, beta';
+const gami_version = '0.8.1, beta';
 
 var my_GAMI_NameSpace = function () {
   //A function wrapper simply to create my own 'Get APE Mobile Info' name space
@@ -110,34 +110,51 @@ var my_GAMI_NameSpace = function () {
 
   async function downloadPDFs() {
     document.getElementById('butn_downloadPDFs').disabled = true;
-    for (var i = jsonResult.length - 1; i >= 0; i--) {
+    const numRecords = jsonResult.length;
+    let recordCount = 0;
+    let numDownloaded = 0;
+    let numErrors = 0;
+    for (var i = numRecords - 1; i >= 0; i--) {
+      recordCount++;
       // Skip forms with draft status.
       if (jsonResult[i].status === 1 || jsonResult[i].status === 4) {
         const formID = jsonResult[i].id;
-        // console.log(`${formID}: ${jsonResult[i].short_description}`);
-        setElementTextDisplay(
-          'downloadProgressMsg',
-          `Getting form ${formID}, ${jsonResult[i].short_description}`,
-          'block'
-        );
+        const shortDesc = jsonResult[i].short_description;
+        // console.log(`${formID}: ${shortDesc}`);
+        let statusMsg = `Getting file ${recordCount}/${numRecords}, form #${formID}`;
+        statusMsg = shortDesc ? statusMsg + ` '${shortDesc}'` : statusMsg;
+        setElementTextDisplay('downloadProgressMsg', statusMsg, 'block');
         let pdfBlob;
         try {
           pdfBlob = await aGet(site1, apeEntityType.Form, formID, '', { outputTo: 'pdf' });
         } catch (error) {
-          console.error(`Error when trying to get a PDF of form ${formID}`);
-          continue;
+          try {
+            // Try a 2nd time:
+            pdfBlob = await aGet(site1, apeEntityType.Form, formID, '', { outputTo: 'pdf' });
+          } catch (error) {
+            console.error(`Error when trying to get a PDF of form ${formID}`);
+            numErrors++;
+            continue;
+          }
         }
         try {
-          let filename = `${jsonResult[i].short_description}_${formID}.pdf`;
+          let filename = shortDesc ? `${shortDesc} (${formID}).pdf` : `(${formID}).pdf`;
           filename = filename.replace(/[/\\?%*:|"<>]/g, ''); //Remove illegal characters from the file name
           saveBlob(pdfBlob, filename);
         } catch (error) {
           console.error(`Error when trying to save the PDF of form ${formID}`);
+          numErrors++;
+          continue;
         }
+        numDownloaded++;
       }
     }
     // setElementTextDisplay('downloadProgressMsg', 'Finished downloading', 'block');
-    alert('Finished downloading');
+    let alertMsg = `Finished. Downloaded ${numDownloaded} file${
+      numDownloaded !== 1 ? 's' : ''
+    }. There were ${numErrors} error${numErrors !== 1 ? 's' : ''}.`;
+    if (numErrors > 0) alertMsg = alertMsg + '\nSee the browser console (via CTRL+i) for error details!';
+    alert(alertMsg);
     setElementTextDisplay('downloadProgressMsg', '', 'none');
     document.getElementById('butn_downloadPDFs').disabled = false;
   }
@@ -345,7 +362,7 @@ var my_GAMI_NameSpace = function () {
     if (jsonResult.length !== 1) {
       infoTypeName = infoTypeName + 's';
     }
-    setElementTextDisplay('resultSummaryText', `Got ${jsonResult.length} ${infoTypeName}`, 'block');
+    setElementTextDisplay('resultSummaryText', `Got a list of ${jsonResult.length} ${infoTypeName}`, 'block');
 
     document.getElementById('pdfViewer').style.display = blockOrNone(
       document.getElementById('infoType').value === apeEntityType.Form && jsonResult.length > 0
