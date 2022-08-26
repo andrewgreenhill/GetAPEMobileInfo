@@ -120,7 +120,7 @@ var my_GAMI_NameSpace = function () {
           `Getting form ${formID}, ${jsonResult[i].short_description}`,
           'block'
         );
-        const pdfBlob;
+        let pdfBlob;
         try {
           pdfBlob = await aGet(site1, apeEntityType.Form, formID, '', { outputTo: 'pdf' });
         } catch (error) {
