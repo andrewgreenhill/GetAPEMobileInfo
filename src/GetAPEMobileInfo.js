@@ -117,16 +117,21 @@ var my_GAMI_NameSpace = function () {
         // console.log(`${formID}: ${jsonResult[i].short_description}`);
         setElementTextDisplay(
           'downloadProgressMsg',
-          `Downloading form ${formID}, ${jsonResult[i].short_description}`,
+          `Getting form ${formID}, ${jsonResult[i].short_description}`,
           'block'
         );
         try {
           let pdfBlob = await aGet(site1, apeEntityType.Form, formID, '', { outputTo: 'pdf' });
+        } catch (error) {
+          console.error(`Error when trying to get a PDF of form ${formID}`);
+          continue;
+        }
+        try {
           let filename = `${jsonResult[i].short_description}_${formID}.pdf`;
           filename = filename.replace(/[/\\?%*:|"<>]/g, ''); //Remove illegal characters from the file name
           saveBlob(pdfBlob, filename);
         } catch (error) {
-          console.error(`Error when trying to get a PDF of form ${formID}`);
+          console.error(`Error when trying to save the PDF of form ${formID}`);
         }
       }
     }
