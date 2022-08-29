@@ -141,6 +141,7 @@ var my_GAMI_NameSpace = function () {
           let filename = shortDesc ? `${shortDesc} (${formID}).pdf` : `(${formID}).pdf`;
           filename = filename.replace(/[/\\?%*:|"<>]/g, ''); //Remove illegal characters from the file name
           saveBlob(pdfBlob, filename);
+          jsonResult[i].downloaded = true;
         } catch (error) {
           console.error(`Error when trying to save the PDF of form ${formID}`);
           numErrors++;
@@ -153,6 +154,7 @@ var my_GAMI_NameSpace = function () {
     let alertMsg = `Finished. Downloaded ${numDownloaded} file${
       numDownloaded !== 1 ? 's' : ''
     }. There were ${numErrors} error${numErrors !== 1 ? 's' : ''}.`;
+    // alertMsg = alertMsg + `\nDownload the list of forms and see the 'Downloaded' column.`;
     if (numErrors > 0) alertMsg = alertMsg + '\nSee the browser console (via CTRL+i) for error details!';
     alert(alertMsg);
     setElementTextDisplay('downloadProgressMsg', '', 'none');
@@ -331,6 +333,13 @@ var my_GAMI_NameSpace = function () {
       if (!projectsList) {
         jsonResult = await aGet(site1, entityType, entityId, endpointParams, specialParams);
         siteRespondedOk();
+        const sdContains = document.getElementById('formSDcontains').value;
+        if (entityType === apeEntityType.Form && sdContains) {
+          // Filter out forms whose Short Descs don't contain sdContains:
+          jsonResult = jsonResult.filter(function (obj) {
+            return obj.short_description.includes(sdContains);
+          });
+        }
       } else {
         //Get records from all projects in projectsList using a loop.
         //I'm using a traditional FOR loop because forEach doesn't wait for async/await.
