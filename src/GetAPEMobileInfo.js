@@ -15,7 +15,7 @@ import { in_array_replace_A_with_B, in_array_after_A_insert_B } from './lib/AG_a
 import { removeStartOfString, removeEndOfString } from './lib/AG_string_functions.js';
 import { currentYYMMDD } from './lib/AG_date_functions.js';
 import { valueOfQueryStringParam } from './lib/AG_web_page_functions.js';
-const gami_version = '0.8.1, beta';
+const gami_version = '0.8.2, beta';
 
 var my_GAMI_NameSpace = function () {
   //A function wrapper simply to create my own 'Get APE Mobile Info' name space
