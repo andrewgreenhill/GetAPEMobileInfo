@@ -15,7 +15,7 @@ import { in_array_replace_A_with_B, in_array_after_A_insert_B } from './lib/AG_a
 import { removeStartOfString, removeEndOfString } from './lib/AG_string_functions.js';
 import { currentYYMMDD } from './lib/AG_date_functions.js';
 import { valueOfQueryStringParam } from './lib/AG_web_page_functions.js';
-const gami_version = '0.8.2, beta';
+const gami_version = '0.8.3, beta';
 
 var my_GAMI_NameSpace = function () {
   //A function wrapper simply to create my own 'Get APE Mobile Info' name space
@@ -36,6 +36,7 @@ var my_GAMI_NameSpace = function () {
   const paramO = valueOfQueryStringParam('options');
   var specialParams = { dontRLUserCheck: true }; //By default, don't rate-limit user permissions checks
   var stopped = false; //State changed by use of the stop button
+  var stoppedPDFs = false; //State changed by use of the stop downloading PDFs button
 
   function siteNameChanged() {
     specialParams.dontRLUserCheck = true; //Don't rate-limit user-permission checks following a site change
@@ -93,6 +94,7 @@ var my_GAMI_NameSpace = function () {
     document.getElementById('butn_GI').onclick = getInfoHandler;
     document.getElementById('butn_DF').onclick = downloadAction;
     document.getElementById('butn_downloadPDFs').onclick = downloadPDFs;
+    document.getElementById('butn_stopPDFs').onclick = stopDowloadingPDFs;
     document.getElementById('butn_pdf').onclick = display_a_PDF_Handler;
     document.getElementById('siteName').addEventListener('change', siteNameChanged);
     document.getElementById('infoType').addEventListener('change', displayEndpointParams);
@@ -114,7 +116,8 @@ var my_GAMI_NameSpace = function () {
     let recordCount = 0;
     let numDownloaded = 0;
     let numErrors = 0;
-    for (var i = numRecords - 1; i >= 0; i--) {
+    document.getElementById('butn_stopPDFs').style.display = 'block';
+    for (var i = numRecords - 1; i >= 0 && !stoppedPDFs; i--) {
       recordCount++;
       // Skip forms with draft status.
       if (jsonResult[i].status === 1 || jsonResult[i].status === 4) {
@@ -150,6 +153,8 @@ var my_GAMI_NameSpace = function () {
         numDownloaded++;
       }
     }
+    stoppedPDFs = false;
+    document.getElementById('butn_stopPDFs').style.display = 'none';
     // setElementTextDisplay('downloadProgressMsg', 'Finished downloading', 'block');
     let alertMsg = `Finished. Downloaded ${numDownloaded} file${
       numDownloaded !== 1 ? 's' : ''
@@ -163,6 +168,10 @@ var my_GAMI_NameSpace = function () {
 
   function stopAction() {
     stopped = true;
+  }
+
+  function stopDowloadingPDFs() {
+    stoppedPDFs = true;
   }
 
   //A simple function to help with turning an element's display on/off:
