@@ -117,6 +117,7 @@ var my_GAMI_NameSpace = function () {
     let numDownloaded = 0;
     let numErrors = 0;
     document.getElementById('butn_stopPDFs').style.display = 'block';
+    stoppedPDFs = false;
     for (var i = numRecords - 1; i >= 0 && !stoppedPDFs; i--) {
       recordCount++;
       // Skip forms with draft status.
@@ -153,17 +154,17 @@ var my_GAMI_NameSpace = function () {
         numDownloaded++;
       }
     }
-    stoppedPDFs = false;
     document.getElementById('butn_stopPDFs').style.display = 'none';
     // setElementTextDisplay('downloadProgressMsg', 'Finished downloading', 'block');
-    let alertMsg = `Finished. Downloaded ${numDownloaded} file${
+    let alertMsg = `${stoppedPDFs ? 'Stopped' : 'Finished'}. Downloaded ${numDownloaded} file${
       numDownloaded !== 1 ? 's' : ''
-    }. There were ${numErrors} error${numErrors !== 1 ? 's' : ''}.`;
+    }. There ${numErrors !== 1 ? 'were' : 'was'} ${numErrors} error${numErrors !== 1 ? 's' : ''}.`;
+    stoppedPDFs = false;
     // alertMsg = alertMsg + `\nDownload the list of forms and see the 'Downloaded' column.`;
     if (numErrors > 0) alertMsg = alertMsg + '\nSee the browser console (via CTRL+i) for error details!';
+    document.getElementById('butn_downloadPDFs').disabled = false;
     alert(alertMsg);
     setElementTextDisplay('downloadProgressMsg', '', 'none');
-    document.getElementById('butn_downloadPDFs').disabled = false;
   }
 
   function stopAction() {
