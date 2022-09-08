@@ -161,7 +161,7 @@ var my_GAMI_NameSpace = function () {
     }. There ${numErrors !== 1 ? 'were' : 'was'} ${numErrors} error${numErrors !== 1 ? 's' : ''}.`;
     stoppedPDFs = false;
     // alertMsg = alertMsg + `\nDownload the list of forms and see the 'Downloaded' column.`;
-    if (numErrors > 0) alertMsg = alertMsg + '\nSee the browser console (via CTRL+i) for error details!';
+    if (numErrors > 0) alertMsg = alertMsg + '\nSee the browser console (via CTRL+SHIFT+i) for error details!';
     document.getElementById('butn_downloadPDFs').disabled = false;
     alert(alertMsg);
     setElementTextDisplay('downloadProgressMsg', '', 'none');
