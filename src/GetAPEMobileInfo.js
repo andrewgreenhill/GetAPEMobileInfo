@@ -15,7 +15,7 @@ import { in_array_replace_A_with_B, in_array_after_A_insert_B } from './lib/AG_a
 import { removeStartOfString, removeEndOfString } from './lib/AG_string_functions.js';
 import { currentYYMMDD } from './lib/AG_date_functions.js';
 import { valueOfQueryStringParam } from './lib/AG_web_page_functions.js';
-const gami_version = '0.8.3, beta';
+const gami_version = '0.8.4';
 
 var my_GAMI_NameSpace = function () {
   //A function wrapper simply to create my own 'Get APE Mobile Info' name space
@@ -34,6 +34,7 @@ var my_GAMI_NameSpace = function () {
   const paramCh = valueOfQueryStringParam('convertHref') || 'true';
   const convertHref = paramCh.toLowerCase() !== 'false';
   const paramO = valueOfQueryStringParam('options');
+  const proxySwitch = valueOfQueryStringParam('proxy');
   var specialParams = { dontRLUserCheck: true }; //By default, don't rate-limit user permissions checks
   var stopped = false; //State changed by use of the stop button
   var stoppedPDFs = false; //State changed by use of the stop downloading PDFs button
@@ -107,6 +108,10 @@ var my_GAMI_NameSpace = function () {
       document.getElementById('siteName').value = window.location.hostname;
     } else {
       site1.proxy = 'https://cors-anywhere-ag.herokuapp.com/'; //This proxy prevents blocking by browser SOP
+    }
+    if (proxySwitch.toLocaleLowerCase() === 'no' || proxySwitch.toLocaleLowerCase() === 'none') {
+      site1.proxy = '';
+      console.log('No proxy');
     }
   }
 

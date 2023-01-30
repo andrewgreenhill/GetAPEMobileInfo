@@ -62,6 +62,8 @@
             => "Form collection"</p>
         <p>The template_type output is re-mapped from numbers 1-5 to <em>General Memo</em>, <em>Issue Memo</em>, <em>RFI Memo</em>, <em>Action</em> and <em>Form</em>.</p>
         <p>When exporting <em>Published</em> and <em>Archived</em> templates, their parent <em>draft_template_id</em> and <em>draft_template_href</em> is output into the CSV file.</p>
+        <h2>Proxy</h2>
+        <p>This app has been using a proxy that I was running on a free Heroku service but then Heroku abolished free plans (and my funds are short) so that stopped this app working. I was using the proxy to stop web browsers giving an error from their SOP/CORS policy when I get data from a different domain (i.e. Damstra Forms). For now you can work around that by using a query parameter proxy=no (at the end of the GAMI URL) to tell it to not use the Heroku proxy, and configure your browser to <a href="https://stackoverflow.com/questions/3102819/disable-same-origin-policy-in-chrome" target="_blank">not</a> complain about SOP/CORS.</p>
         <h2>Also See</h2>
         <p><a href="./ReleaseNotes.html">Release Notes</a></p>
     </div>    
